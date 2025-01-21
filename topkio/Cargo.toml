@@ -2,5 +2,11 @@
 name = "topkio"
 version = "0.1.0"
 edition = "2021"
+authors = ["zTgx <beautifularea@gmail.com>"]
+repository = "https://github.com/zTgx/topkio.rs.git"
+readme = "README.md"
+keywords = ["ai", "llm", "framework", "openai"]
+license = "MIT"
+description = "topkio is an innovative and high-performance large language model framework."
 
 [dependencies]
