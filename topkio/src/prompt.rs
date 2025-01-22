@@ -12,13 +12,3 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod agent;
-mod completion;
-mod constants;
-mod gemini;
-mod openai;
-mod primitives;
-mod utils;
-
-pub use gemini::Client as GeminiClient;
-pub use openai::Client as OpenAIClient;

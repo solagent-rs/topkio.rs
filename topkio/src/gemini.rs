@@ -26,7 +26,7 @@ pub struct Client {
     pub(crate) client: reqwest::Client,
 }
 
-fn make_build() -> reqwest::Client {
+fn make_client() -> reqwest::Client {
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(
         reqwest::header::CONTENT_TYPE,
@@ -43,7 +43,7 @@ impl Client {
     pub fn new(api_key: &str) -> Self {
         Client {
             api_key: api_key.to_owned(),
-            client: make_build(),
+            client: make_client(),
         }
     }
 }

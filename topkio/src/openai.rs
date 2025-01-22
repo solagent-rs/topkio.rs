@@ -27,7 +27,7 @@ pub struct Client {
     pub(crate) client: reqwest::Client,
 }
 
-fn make_build(api_key: &str) -> reqwest::Client {
+fn make_client(api_key: &str) -> reqwest::Client {
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(
         "Authorization",
@@ -44,7 +44,7 @@ fn make_build(api_key: &str) -> reqwest::Client {
 
 impl Client {
     pub fn new(api_key: &str) -> Self {
-        let client = make_build(api_key);
+        let client = make_client(api_key);
 
         Client {
             url: OPENAI_API_URL.to_owned(),
@@ -53,7 +53,7 @@ impl Client {
     }
 
     pub fn with_ollama(url: &str) -> Self {
-        let client = make_build("ollama");
+        let client = make_client("ollama");
 
         Client {
             url: url.to_owned(),
