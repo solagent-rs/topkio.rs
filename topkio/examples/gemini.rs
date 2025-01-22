@@ -19,15 +19,16 @@ async fn main() {
     let gemini_api_key = std::env::var("GEMINI_API_KEY").expect("GEMINI_API_KEY not set");
     let client = GeminiClient::new(&gemini_api_key);
 
-    let agent_builder = client.agent("gemini-1.5-flash");
-    let builder = agent_builder.stream(true);
+    let builder = client.config("gemini-1.5-flash");
+    let builder = builder.stream(true);
     let builder = builder.temperature(0.8);
+    let config = builder.build();
 
     // let prompt = "Entertain me";
     let prompt = "1 + 1 = ";
 
     let _ = client
-        .prompt(builder, prompt, &mut |res| {
+        .prompt(config, prompt, &mut |res| {
             print!("{}", res);
             Ok(())
         })

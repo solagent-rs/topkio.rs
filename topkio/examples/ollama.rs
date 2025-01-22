@@ -18,15 +18,16 @@ use topkio::OpenAIClient;
 async fn main() {
     let client = OpenAIClient::with_ollama("http://localhost:11434/v1");
 
-    let agent_builder = client.agent("llama3.2");
+    let agent_builder = client.config("llama3.2");
     let builder = agent_builder.stream(true);
     let builder = builder.temperature(0.8);
+    let config = builder.build();
 
     // let prompt = "Entertain me";
     let prompt = "1 + 1 = ";
 
     let _ = client
-        .prompt(builder, prompt, &mut |res| {
+        .prompt(config, prompt, &mut |res| {
             print!("{}", res);
             Ok(())
         })

@@ -17,7 +17,9 @@ use regex::Regex;
 use std::io::Write;
 
 use crate::{
-    agent::AgentBuilder, constants::GEMINI_API_URL, primitives::GenerateContentResponse,
+    config::{Config, ConfigBuilder},
+    constants::GEMINI_API_URL,
+    primitives::GenerateContentResponse,
     utils::build_structure,
 };
 
@@ -49,14 +51,13 @@ impl Client {
 }
 
 impl Client {
-    pub async fn prompt<F>(&self, builder: AgentBuilder, prompt: &str, callback: &mut F)
+    pub async fn prompt<F>(&self, config: Config, prompt: &str, callback: &mut F)
     where
         F: Fn(&String) -> Result<(), Box<dyn std::error::Error>> + Send + 'static,
     {
-        let agent = builder.build();
         let req = build_structure(prompt);
 
-        let stream = agent.stream.unwrap_or(false);
+        let stream = config.stream.unwrap_or(false);
         let url = if stream {
             format!(
                 "{}/{}?key={}",
@@ -114,7 +115,7 @@ impl Client {
 }
 
 impl Client {
-    pub fn agent(&self, model: &str) -> AgentBuilder {
-        AgentBuilder::new(model.into())
+    pub fn config(&self, model: &str) -> ConfigBuilder {
+        ConfigBuilder::new(model.into())
     }
 }

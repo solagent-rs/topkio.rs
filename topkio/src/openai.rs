@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::{
-    agent::AgentBuilder,
+    config::{Config, ConfigBuilder},
     constants::OPENAI_API_URL,
     primitives::{ChatCompletion, Message},
     utils::parse_chunk,
@@ -63,23 +63,20 @@ impl Client {
 }
 
 impl Client {
-    pub async fn prompt<F>(&self, builder: AgentBuilder, prompt: &str, callback: &mut F)
+    pub async fn prompt<F>(&self, config: Config, prompt: &str, callback: &mut F)
     where
         F: Fn(&String) -> Result<(), Box<dyn std::error::Error>> + Send + 'static,
     {
-        let agent = builder.build();
-        println!(">> agent: {:?}", agent);
-
         let full_history = vec![Message {
             role: "user".into(),
             content: prompt.into(),
         }];
 
         let req = json!({
-            "model": agent.model,
+            "model": config.model,
             "messages": full_history,
-            "temperature": agent.temperature,
-            "stream": agent.stream,
+            "temperature": config.temperature,
+            "stream": config.stream,
         });
         let url = format!("{}/chat/completions", self.url);
         println!("url: {}", url);
@@ -93,7 +90,7 @@ impl Client {
             .await
             .expect("stream msg");
 
-        let is_stream = agent.stream.unwrap_or(false);
+        let is_stream = config.stream.unwrap_or(false);
         if is_stream {
             let mut stream = response.bytes_stream();
             while let Some(item) = stream.next().await {
@@ -126,7 +123,7 @@ impl Client {
 }
 
 impl Client {
-    pub fn agent(&self, model: &str) -> AgentBuilder {
-        AgentBuilder::new(model.into())
+    pub fn config(&self, model: &str) -> ConfigBuilder {
+        ConfigBuilder::new(model.into())
     }
 }

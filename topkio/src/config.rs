@@ -28,15 +28,15 @@ pub trait Chat {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Agent {
+pub struct Config {
     pub model: String,
     pub temperature: Option<f32>,
     pub stream: Option<bool>,
 }
 
-impl Agent {
+impl Config {
     pub fn new(model: String) -> Self {
-        Agent {
+        Config {
             model,
             temperature: None,
             stream: None,
@@ -44,7 +44,7 @@ impl Agent {
     }
 }
 
-// impl Prompt for Agent {
+// impl Prompt for Config {
 //     fn prompt(
 //             &self,
 //             prompt: &str,
@@ -54,7 +54,7 @@ impl Agent {
 //     }
 // }
 
-// impl Chat for Agent {
+// impl Chat for Config {
 //     fn chat(
 //             &self,
 //             prompt: &str,
@@ -67,20 +67,20 @@ impl Agent {
 
 /// Invoke in a chained manner through the Builder pattern.
 #[derive(Debug, Serialize, Deserialize)]
-pub struct AgentBuilder {
+pub struct ConfigBuilder {
     #[serde(flatten)]
-    pub agent: Agent,
+    pub agent: Config,
 }
 
-impl AgentBuilder {
+impl ConfigBuilder {
     pub fn new(model: String) -> Self {
-        AgentBuilder {
-            agent: Agent::new(model),
+        ConfigBuilder {
+            agent: Config::new(model),
         }
     }
 }
 
-impl AgentBuilder {
+impl ConfigBuilder {
     pub fn stream(mut self, stream: bool) -> Self {
         self.agent.stream = Some(stream);
         self
@@ -91,7 +91,7 @@ impl AgentBuilder {
         self
     }
 
-    pub fn build(self) -> Agent {
+    pub fn build(self) -> Config {
         self.agent
     }
 }
