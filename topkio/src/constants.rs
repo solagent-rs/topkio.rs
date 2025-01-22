@@ -12,13 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod agent;
-mod constants;
-mod openai;
-mod primitives;
-mod utils;
-
-pub use openai::Client as OpenAIClient;
-
-/// export third lib to pub
-pub use futures_util;
+pub(crate) const OPENAI_API_URL: &str = "https://api.openai.com/v1";
+#[allow(unused)]
+pub(crate) const OLLAMA_API_URL: &str = "http://localhost:11434/v1";
+#[allow(unused)]
+pub(crate) const GEMINI_API_URL: &str = "https://generativelanguage.googleapis.com";

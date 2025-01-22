@@ -12,13 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod agent;
-mod constants;
-mod openai;
-mod primitives;
-mod utils;
+use crate::primitives::ChunkResponse;
 
-pub use openai::Client as OpenAIClient;
+pub(crate) fn parse_chunk(chunk: &str) -> Result<ChunkResponse, serde_json::Error> {
+    // 1. Remove "data: " prefix (if present)
+    let data_str = chunk.strip_prefix("data: ").unwrap_or(chunk);
 
-/// export third lib to pub
-pub use futures_util;
+    // 2. Find the end of the JSON data (if there are trailing characters)
+    let end_index = data_str.find('\n').unwrap_or(data_str.len());
+    let json_str = &data_str[..end_index];
+
+    // 3. Deserialize the JSON string
+    let result: ChunkResponse = serde_json::from_str(json_str)?;
+
+    Ok(result)
+}
