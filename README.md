@@ -2,7 +2,5 @@
 
 an innovative LLM framework.  
 
-## features
-- [x] Stream Support
-- [x] Simple Interface
-- [x] Multi-Platform Compatibility
+Minimal footprint, high throughput, ease of use, and streaming capabilities.
+
