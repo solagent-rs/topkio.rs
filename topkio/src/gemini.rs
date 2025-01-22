@@ -54,10 +54,7 @@ impl Client {
         F: Fn(&String) -> Result<(), Box<dyn std::error::Error>> + Send + 'static,
     {
         let agent = builder.build();
-        println!(">> agent: {:?}", agent);
-
         let req = build_structure(prompt);
-        // let req = serde_json::to_string(&structure).unwrap();
 
         let stream = agent.stream.unwrap_or(false);
         let url = if stream {
@@ -86,14 +83,12 @@ impl Client {
             .expect("stream msg");
 
         if stream {
+            let text_regex = Regex::new(r#"text": (.*?)\n"#).unwrap();
+
             let mut stream = response.bytes_stream();
             while let Some(item) = stream.next().await {
-                // println!("Chunk: {:?}", item?);
-
                 let data = &item.expect("msg");
                 let chunk_str = std::str::from_utf8(data).unwrap();
-                // println!("str: {}", chunk_str);
-                let text_regex = Regex::new(r#"text": (.*?)\n"#).unwrap();
                 if let Some(text) = text_regex.captures(chunk_str) {
                     let content = text.get(1).map_or("", |m| m.as_str());
                     let _ = callback(&content.to_owned());
@@ -107,13 +102,11 @@ impl Client {
 
             match result {
                 Ok(chat_completion) => {
-                    // println!("解析成功: {:?}", chat_completion);
-                    // 访问具体字段，例如：
                     let content = &chat_completion.candidates[0].content.parts[0].text;
                     let _ = callback(content);
                 }
                 Err(err) => {
-                    eprintln!("解析失败: {}", err);
+                    eprintln!("Parse error: {}", err);
                 }
             }
         }

@@ -97,13 +97,10 @@ impl Client {
         if is_stream {
             let mut stream = response.bytes_stream();
             while let Some(item) = stream.next().await {
-                // println!("Chunk: {:?}", item?);
-
                 let data = &item.expect("msg");
                 let chunk_str = std::str::from_utf8(data).unwrap();
                 match parse_chunk(chunk_str) {
                     Ok(response) => {
-                        // chunks.push(response);
                         let content = &response.choices[0].delta.content;
                         let _ = callback(&content);
 
@@ -118,13 +115,10 @@ impl Client {
 
             match result {
                 Ok(chat_completion) => {
-                    println!("解析成功: {:?}", chat_completion);
-                    // 访问具体字段，例如：
-                    // println!("生成的文本: {}", chat_completion.choices[0].message.content);
                     let _ = callback(&chat_completion.choices[0].message.content);
                 }
                 Err(err) => {
-                    eprintln!("解析失败: {}", err);
+                    eprintln!("Parse error: {}", err);
                 }
             }
         }
