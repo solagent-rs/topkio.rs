@@ -64,8 +64,49 @@ pub struct ChatCompletion {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Usage {
     prompt_tokens: usize,
     completion_tokens: usize,
     total_tokens: usize,
+}
+
+/// gemini
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Part {
+    pub text: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Content {
+    pub parts: Vec<Part>,
+    pub role: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Structure {
+    pub contents: Vec<Content>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct Candidate {
+    pub(crate) content: Content,
+    pub(crate) finish_reason: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct UsageMetadata {
+    prompt_token_count: usize,
+    candidates_token_count: Option<usize>,
+    total_token_count: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct GenerateContentResponse {
+    pub(crate) candidates: Vec<Candidate>,
+    pub(crate) usage_metadata: UsageMetadata,
+    pub(crate) model_version: String,
 }

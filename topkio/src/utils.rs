@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::primitives::ChunkResponse;
+use crate::primitives::{ChunkResponse, Content, Part, Structure};
 
 pub(crate) fn parse_chunk(chunk: &str) -> Result<ChunkResponse, serde_json::Error> {
     // 1. Remove "data: " prefix (if present)
@@ -26,4 +26,17 @@ pub(crate) fn parse_chunk(chunk: &str) -> Result<ChunkResponse, serde_json::Erro
     let result: ChunkResponse = serde_json::from_str(json_str)?;
 
     Ok(result)
+}
+
+pub(crate) fn build_structure(text: &str) -> Structure {
+    let part = Part {
+        text: text.to_string(),
+    };
+    let content = Content {
+        parts: vec![part],
+        role: "user".to_string(),
+    };
+    Structure {
+        contents: vec![content],
+    }
 }

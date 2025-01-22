@@ -14,11 +14,10 @@
 
 mod agent;
 mod constants;
+mod gemini;
 mod openai;
 mod primitives;
 mod utils;
 
+pub use gemini::Client as GeminiClient;
 pub use openai::Client as OpenAIClient;
-
-/// export third lib to pub
-pub use futures_util;
