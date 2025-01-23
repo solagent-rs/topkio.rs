@@ -1,6 +1,5 @@
 # topkio.rs
 
-an innovative LLM framework.  
+Not all AI agent frameworks are called topkio.  
 
-Minimal footprint, high throughput, ease of use, and streaming capabilities.
-
+Small, fast, powerful, and easy to use.  
