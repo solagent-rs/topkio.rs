@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::{
-    primitives::{CompletionRequestBuilder, FunctionDeclaration},
-    Completion,
-};
+use crate::primitives::{Completion, CompletionRequestBuilder, FunctionDeclaration, Message};
 use std::cell::OnceCell;
 
 #[derive(Clone)]
@@ -38,14 +35,44 @@ impl<C: Completion> Agent<C> {
             static_tools: vec![],
         }
     }
+}
 
-    pub async fn prompt<F>(&self, prompt: &str, callback: F)
+// TODO: return Result<(), PromptError>
+impl<C: Completion> Agent<C> {
+    pub async fn prompt<F>(&self, prompt: &str, callback: F) -> Result<(), ()>
+    where
+        F: Fn(&str) + Send + 'static,
+    {
+        self.chat_impl(prompt, vec![], callback).await
+    }
+
+    pub async fn chat<F>(
+        &self,
+        prompt: &str,
+        chat_history: Vec<Message>,
+        callback: F,
+    ) -> Result<(), ()>
+    where
+        F: Fn(&str) + Send + 'static,
+    {
+        self.chat_impl(prompt, chat_history, callback).await
+    }
+}
+
+impl<C: Completion> Agent<C> {
+    async fn chat_impl<F>(
+        &self,
+        prompt: &str,
+        chat_history: Vec<Message>,
+        callback: F,
+    ) -> Result<(), ()>
     where
         F: Fn(&str) + Send + 'static,
     {
         let req = CompletionRequestBuilder::new()
             .model(self.model.clone())
             .prompt(prompt.to_string())
+            .chat_history(chat_history)
             .temperature(self.temperature)
             .stream(self.stream)
             .build();
@@ -53,7 +80,7 @@ impl<C: Completion> Agent<C> {
         let cell = OnceCell::new();
         let _ = cell.set(callback);
 
-        let _ = self.client.post(req, cell).await;
+        self.client.post(req, cell).await
     }
 }
 

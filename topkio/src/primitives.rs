@@ -13,7 +13,18 @@
 // limitations under the License.
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{cell::OnceCell, collections::HashMap};
+
+/////////////////////////////////////////////// Completion trait //////////////////////////////////
+pub trait Completion {
+    fn post<F>(
+        &self,
+        req: CompletionRequest,
+        callback: OnceCell<F>,
+    ) -> impl std::future::Future<Output = Result<(), ()>> + Send
+    where
+        F: Fn(&str) + Send + 'static;
+}
 
 /////////////////////////////////////////////// Tools ///////////////////////////////////////////
 /// For all kinds of client: openai, gemini and more
@@ -112,6 +123,15 @@ pub struct Message {
     /// "system", "user", or "assistant"
     pub role: String,
     pub content: String,
+}
+
+impl Message {
+    pub fn new(role: &str, content: &str) -> Self {
+        Message {
+            role: role.to_string(),
+            content: content.to_string(),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

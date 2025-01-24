@@ -20,19 +20,7 @@ mod primitives;
 mod tool;
 mod utils;
 
-pub use agent::*;
+pub use agent::{Agent, AgentBuilder};
 pub use gemini::Client as GeminiClient;
 pub use openai::Client as OpenAIClient;
-
-use primitives::CompletionRequest;
-use std::cell::OnceCell;
-
-pub trait Completion {
-    fn post<F>(
-        &self,
-        req: CompletionRequest,
-        callback: OnceCell<F>,
-    ) -> impl std::future::Future<Output = Result<(), ()>> + Send
-    where
-        F: Fn(&str) + Send + 'static;
-}
+pub use primitives::Message;

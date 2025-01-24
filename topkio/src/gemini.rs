@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// use crate::{agent::AgentBuilder, completion::CompletionBuilder, prompt::PromptData};
-
 use crate::{
     constants::{GEMINI_API_URL, GEMINI_API_URL_PATH},
-    primitives::{CompletionRequest, GenerateContentRequest, GenerateContentResponse},
+    primitives::{Completion, CompletionRequest, GenerateContentRequest, GenerateContentResponse},
     utils::gemini_parse_chunk,
-    Completion,
 };
 use futures_util::StreamExt;
 use std::{cell::OnceCell, io::Write};
@@ -70,8 +67,6 @@ impl Completion for Client {
         };
 
         let body = GenerateContentRequest::new(&req.prompt, None);
-        println!("req_body: {:?}", body);
-
         let response = self
             .client
             .post(&endpoint)

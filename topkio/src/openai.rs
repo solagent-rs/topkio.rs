@@ -14,9 +14,8 @@
 
 use crate::{
     constants::OPENAI_API_URL,
-    primitives::{ChatCompletion, CompletionRequest, OpenAICompletionRequest},
+    primitives::{ChatCompletion, Completion, CompletionRequest, OpenAICompletionRequest},
     utils::parse_chunk,
-    Completion,
 };
 use futures_util::StreamExt;
 use std::{cell::OnceCell, io::Write};
