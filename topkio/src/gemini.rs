@@ -14,18 +14,23 @@
 
 use crate::{
     constants::{GEMINI_API_URL, GEMINI_API_URL_PATH},
-    primitives::{Completion, CompletionRequest, GenerateContentRequest, GenerateContentResponse},
+    primitives::{
+        Completion, CompletionRequest, CompletionResponse, GenerateContentRequest,
+        GenerateContentResponse, ModelChoice,
+    },
     utils::gemini_parse_chunk,
+    ToolSet,
 };
 use futures_util::StreamExt;
 use std::{cell::OnceCell, io::Write};
 
-pub struct Client {
+pub struct Client<'a> {
     pub(crate) api_key: String,
     pub(crate) client: reqwest::Client,
+    pub tools: Option<&'a ToolSet>,
 }
 
-impl Client {
+impl<'a> Client<'a> {
     pub fn new(api_key: &str) -> Self {
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
@@ -41,14 +46,24 @@ impl Client {
         Client {
             api_key: api_key.to_owned(),
             client,
+            tools: None,
         }
+    }
+
+    pub fn tools(&mut self, toolset: &'a ToolSet) {
+        self.tools = Some(toolset);
     }
 }
 
-impl Completion for Client {
-    async fn post<F>(&self, req: CompletionRequest, callback: OnceCell<F>) -> Result<(), ()>
+impl<'a> Completion for Client<'a> {
+    async fn post<F>(
+        &self,
+        req: CompletionRequest,
+        tools: &ToolSet,
+        callback: OnceCell<F>,
+    ) -> Result<(), ()>
     where
-        F: Fn(&str) + std::marker::Send,
+        F: Fn(&str) + Send,
     {
         let eable_stream = req.stream.unwrap_or(false);
         let endpoint = match eable_stream {
@@ -66,7 +81,9 @@ impl Completion for Client {
             ),
         };
 
-        let body = GenerateContentRequest::new(&req.prompt, None);
+        let body = GenerateContentRequest::new(&req.prompt, req.tools);
+        println!("body: {:#?}", body);
+
         let response = self
             .client
             .post(&endpoint)
@@ -81,28 +98,69 @@ impl Completion for Client {
                 while let Some(item) = stream.next().await {
                     let data = &item.expect("msg");
                     let chunk_str = std::str::from_utf8(data).expect("Gemini expect utf8.");
-                    if let Ok(response) = gemini_parse_chunk(chunk_str) {
-                        response.candidates.iter().for_each(|candidate| {
-                            candidate.content.parts.iter().for_each(|part| {
-                                if let Some(callback) = callback.get() {
-                                    callback(&part.text);
-                                    std::io::stdout().flush().expect("Failed to flush stdout");
+                    if let Ok(generate_response) = gemini_parse_chunk(chunk_str) {
+                        if let Ok(completion_response) =
+                            CompletionResponse::try_from(generate_response)
+                        {
+                            match completion_response {
+                                CompletionResponse {
+                                    choice: ModelChoice::Message(msg),
+                                    ..
+                                } => {
+                                    if let Some(callback) = callback.get() {
+                                        callback(&msg);
+                                        std::io::stdout().flush().expect("Failed to flush stdout");
+                                    }
                                 }
-                            })
-                        });
+                                CompletionResponse {
+                                    choice: ModelChoice::ToolCall(toolname, args),
+                                    ..
+                                } => {
+                                    if let Ok(res) = tools.invoke(&toolname, args.to_string()).await
+                                    {
+                                        if let Some(callback) = callback.get() {
+                                            callback(&res);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     };
                 }
             }
             false => {
-                let generate_response = response.json::<GenerateContentResponse>().await.ok();
-                if let Some(generate_response) = generate_response {
-                    generate_response.candidates.iter().for_each(|candidate| {
-                        candidate.content.parts.iter().for_each(|part| {
-                            if let Some(callback) = callback.get() {
-                                callback(&part.text);
+                let generate_response = response.json::<GenerateContentResponse>().await;
+                match generate_response {
+                    Ok(generate_response) => {
+                        if let Ok(completion_response) =
+                            CompletionResponse::try_from(generate_response)
+                        {
+                            match completion_response {
+                                CompletionResponse {
+                                    choice: ModelChoice::Message(msg),
+                                    ..
+                                } => {
+                                    if let Some(callback) = callback.get() {
+                                        callback(&msg);
+                                    }
+                                }
+                                CompletionResponse {
+                                    choice: ModelChoice::ToolCall(toolname, args),
+                                    ..
+                                } => {
+                                    if let Ok(res) = tools.invoke(&toolname, args.to_string()).await
+                                    {
+                                        if let Some(callback) = callback.get() {
+                                            callback(&res);
+                                        }
+                                    }
+                                }
                             }
-                        });
-                    })
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("Gemini parse GenerateContentResponse error: {}", e);
+                    }
                 }
             }
         }

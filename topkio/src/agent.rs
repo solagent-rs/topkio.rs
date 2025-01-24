@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::primitives::{Completion, CompletionRequestBuilder, FunctionDeclaration, Message};
+use futures_util::{stream, StreamExt};
+
+use crate::{
+    primitives::{Completion, CompletionRequestBuilder, Message},
+    tool::{ToolDyn, ToolSet},
+};
 use std::cell::OnceCell;
 
-#[derive(Clone)]
 pub struct Agent<C: Completion> {
     pub client: C,
     pub model: String,
     pub temperature: Option<f64>,
     pub stream: Option<bool>,
 
-    pub static_tools: Vec<FunctionDeclaration>,
+    static_tools: Vec<String>,
+    pub tools: ToolSet,
 }
 
 impl<C: Completion> Agent<C> {
@@ -33,6 +38,7 @@ impl<C: Completion> Agent<C> {
             temperature: None,
             stream: None,
             static_tools: vec![],
+            tools: ToolSet::default(),
         }
     }
 }
@@ -69,22 +75,34 @@ impl<C: Completion> Agent<C> {
     where
         F: Fn(&str) + Send + 'static,
     {
+        // TODO: how to handle chat_history
+        let static_tools = stream::iter(self.static_tools.iter())
+            .filter_map(|toolname| async move {
+                if let Some(tool) = self.tools.get(toolname) {
+                    Some(tool.definition().await)
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<_>>()
+            .await;
+
         let req = CompletionRequestBuilder::new()
             .model(self.model.clone())
             .prompt(prompt.to_string())
             .chat_history(chat_history)
             .temperature(self.temperature)
             .stream(self.stream)
+            .tools(static_tools)
             .build();
 
         let cell = OnceCell::new();
         let _ = cell.set(callback);
 
-        self.client.post(req, cell).await
+        self.client.post(req, &self.tools, cell).await
     }
 }
 
-#[derive(Clone)]
 pub struct AgentBuilder<C: Completion> {
     pub agent: Agent<C>,
 }
@@ -108,9 +126,9 @@ impl<C: Completion> AgentBuilder<C> {
         self
     }
 
-    pub fn tool(mut self, tool: FunctionDeclaration) -> Self {
-        self.agent.static_tools.push(tool);
-
+    pub fn tool(mut self, tool: impl ToolDyn + 'static) -> Self {
+        self.agent.static_tools.push(tool.name());
+        self.agent.tools.add(tool);
         self
     }
 

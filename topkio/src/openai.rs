@@ -14,8 +14,12 @@
 
 use crate::{
     constants::OPENAI_API_URL,
-    primitives::{ChatCompletion, Completion, CompletionRequest, OpenAICompletionRequest},
+    primitives::{
+        ChatCompletion, Completion, CompletionRequest, CompletionResponse, ModelChoice,
+        OpenAICompletionRequest,
+    },
     utils::parse_chunk,
+    ToolSet,
 };
 use futures_util::StreamExt;
 use std::{cell::OnceCell, io::Write};
@@ -46,11 +50,20 @@ impl Client {
 }
 
 impl Completion for Client {
-    async fn post<F>(&self, req: CompletionRequest, callback: OnceCell<F>) -> Result<(), ()>
+    async fn post<F>(
+        &self,
+        req: CompletionRequest,
+        tools: &ToolSet,
+        callback: OnceCell<F>,
+    ) -> Result<(), ()>
     where
         F: Fn(&str) + Send,
     {
-        let body = OpenAICompletionRequest::new(&req);
+        let enable_stream = req.stream.unwrap_or(false);
+        let body = OpenAICompletionRequest::new(req);
+
+        println!("body: {:?}", body);
+
         let url = format!("{}/chat/completions", self.url);
         let response = self
             .client
@@ -60,18 +73,42 @@ impl Completion for Client {
             .await
             .expect("openai completion msg");
 
-        match req.stream.unwrap_or(false) {
+        match enable_stream {
             true => {
                 let mut stream = response.bytes_stream();
                 while let Some(item) = stream.next().await {
                     let data = &item.expect("msg");
                     let chunk_str = std::str::from_utf8(data).expect("OpenAI expect utf8.");
                     match parse_chunk(chunk_str) {
-                        Ok(response) => {
-                            let content = &response.choices[0].delta.content;
-                            if let Some(callback) = callback.get() {
-                                callback(content);
-                                std::io::stdout().flush().expect("Failed to flush stdout");
+                        Ok(chunk_response) => {
+                            if let Ok(completion_response) =
+                                CompletionResponse::try_from(chunk_response)
+                            {
+                                match completion_response {
+                                    CompletionResponse {
+                                        choice: ModelChoice::Message(msg),
+                                        ..
+                                    } => {
+                                        if let Some(callback) = callback.get() {
+                                            callback(&msg);
+                                            std::io::stdout()
+                                                .flush()
+                                                .expect("Failed to flush stdout");
+                                        }
+                                    }
+                                    CompletionResponse {
+                                        choice: ModelChoice::ToolCall(toolname, args),
+                                        ..
+                                    } => {
+                                        if let Ok(res) =
+                                            tools.invoke(&toolname, args.to_string()).await
+                                        {
+                                            if let Some(callback) = callback.get() {
+                                                callback(&res);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                         Err(err) => println!("OpenAI error parsing chunk: {}", err),
@@ -79,14 +116,30 @@ impl Completion for Client {
                 }
             }
             false => {
-                let chat_completion = response.json::<ChatCompletion>().await.ok();
-                if let Some(chat_completion) = chat_completion {
-                    chat_completion.choices.iter().for_each(|choice| {
-                        let text = &choice.message.content;
-                        if let Some(callback) = callback.get() {
-                            callback(text);
+                let chat_completion = response.json::<ChatCompletion>().await;
+                if let Ok(chat_completion) = chat_completion {
+                    if let Ok(completion_response) = CompletionResponse::try_from(chat_completion) {
+                        match completion_response {
+                            CompletionResponse {
+                                choice: ModelChoice::Message(msg),
+                                ..
+                            } => {
+                                if let Some(callback) = callback.get() {
+                                    callback(&msg);
+                                }
+                            }
+                            CompletionResponse {
+                                choice: ModelChoice::ToolCall(toolname, args),
+                                ..
+                            } => {
+                                if let Ok(res) = tools.invoke(&toolname, args.to_string()).await {
+                                    if let Some(callback) = callback.get() {
+                                        callback(&res);
+                                    }
+                                }
+                            }
                         }
-                    });
+                    }
                 }
             }
         }
