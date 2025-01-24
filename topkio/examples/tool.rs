@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use serde_json::json;
 use topkio::{AgentBuilder, GeminiClient};
 
 #[tokio::main]
@@ -19,12 +20,31 @@ async fn main() {
     let gemini_api_key = std::env::var("GEMINI_API_KEY").expect("GEMINI_API_KEY not set");
     let client = GeminiClient::new(&gemini_api_key);
 
+    let tool = json!(
+        {
+            "description": "Request an chat with character",
+            "name": "chat_with_character",
+            "parameters": {
+                "properties": {
+                    "character_name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    );
+
+    let tool = serde_json::from_value(tool).unwrap();
+
     let agent = AgentBuilder::new(client, "gemini-1.5-flash")
         .stream(true)
         .temperature(0.8)
+        .tool(tool)
         .build();
+
     // let prompt = "Entertain me";
-    let prompt = "1 + 1 = ";
+    let prompt = "I want have a talk with alice.";
 
     let f = |res: &str| {
         print!("{}", res);

@@ -4,27 +4,33 @@ Not all AI agent frameworks are called topkio.
 
 Small, fast, powerful, and easy to use.  
 
+WIP
+
+## Features
+- [x] OpenAI
+- [x] Ollama
+- [x] Gemini
+- [x] streaming
+- [ ] tool
+
 ## Quick Start
 ```rust
-use topkio::OpenAIClient;
+use topkio::{AgentBuilder, OpenAIClient};
 
 #[tokio::main]
 async fn main() {
     let client = OpenAIClient::with_ollama("http://localhost:11434/v1");
+    let agent = AgentBuilder::new(client, "llama3.2")
+        .stream(true)
+        .temperature(0.8)
+        .build();
 
-    let config_builder = client.config("llama3.2");
-    let builder = config_builder.stream(true);
-    let builder = builder.temperature(0.8);
-    let config = builder.build();
+    let f = |res: &str| {
+        print!("{}", res);
+    };
 
-    let prompt = "1 + 1 = ";
-
-    let _ = client
-        .prompt(config, prompt, &mut |res| {
-            print!("{}", res);
-            Ok(())
-        })
-        .await;
+    let prompt = "Entertain me";
+    let _ = agent.prompt(prompt, f).await;
 
     println!("\n");
 }

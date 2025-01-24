@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::primitives::{ChunkResponse, Content, Part, Structure};
+use crate::primitives::{ChunkResponse, GenerateContentResponse};
 
 pub(crate) fn parse_chunk(chunk: &str) -> Result<ChunkResponse, serde_json::Error> {
     // 1. Remove "data: " prefix (if present)
@@ -28,15 +28,17 @@ pub(crate) fn parse_chunk(chunk: &str) -> Result<ChunkResponse, serde_json::Erro
     Ok(result)
 }
 
-pub(crate) fn build_structure(text: &str) -> Structure {
-    let part = Part {
-        text: text.to_string(),
-    };
-    let content = Content {
-        parts: vec![part],
-        role: "user".to_string(),
-    };
-    Structure {
-        contents: vec![content],
-    }
+pub(crate) fn gemini_parse_chunk(
+    chunk: &str,
+) -> Result<GenerateContentResponse, serde_json::Error> {
+    // 1. Remove "data: " prefix (if present)
+    let data_str = chunk.strip_prefix("[").unwrap_or(chunk);
+    let data_str = chunk.strip_suffix("]").unwrap_or(data_str);
+    let data_str = chunk.strip_prefix(",").unwrap_or(data_str);
+    let data_str = chunk.strip_suffix(",").unwrap_or(data_str);
+
+    // 2. Deserialize the JSON string
+    let result: GenerateContentResponse = serde_json::from_str(data_str)?;
+
+    Ok(result)
 }

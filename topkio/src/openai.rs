@@ -13,33 +13,17 @@
 // limitations under the License.
 
 use crate::{
-    config::{Config, ConfigBuilder},
     constants::OPENAI_API_URL,
-    primitives::{ChatCompletion, Message},
+    primitives::{ChatCompletion, CompletionRequest, OpenAICompletionRequest},
     utils::parse_chunk,
+    Completion,
 };
 use futures_util::StreamExt;
-use serde_json::json;
-use std::io::Write;
+use std::{cell::OnceCell, io::Write};
 
 pub struct Client {
     pub(crate) url: String,
     pub(crate) client: reqwest::Client,
-}
-
-fn make_client(api_key: &str) -> reqwest::Client {
-    let mut headers = reqwest::header::HeaderMap::new();
-    headers.insert(
-        "Authorization",
-        format!("Bearer {}", api_key)
-            .parse()
-            .expect("Bearer token should parse"),
-    );
-
-    reqwest::Client::builder()
-        .default_headers(headers)
-        .build()
-        .expect("openai client should build")
 }
 
 impl Client {
@@ -62,68 +46,67 @@ impl Client {
     }
 }
 
-impl Client {
-    pub async fn prompt<F>(&self, config: Config, prompt: &str, callback: &mut F)
+impl Completion for Client {
+    async fn post<F>(&self, req: CompletionRequest, callback: OnceCell<F>) -> Result<(), ()>
     where
-        F: Fn(&String) -> Result<(), Box<dyn std::error::Error>> + Send + 'static,
+        F: Fn(&str) + Send,
     {
-        let full_history = vec![Message {
-            role: "user".into(),
-            content: prompt.into(),
-        }];
-
-        let req = json!({
-            "model": config.model,
-            "messages": full_history,
-            "temperature": config.temperature,
-            "stream": config.stream,
-        });
+        let body = OpenAICompletionRequest::new(&req);
         let url = format!("{}/chat/completions", self.url);
-        println!("url: {}", url);
-        println!("req: {}", serde_json::to_string(&req).unwrap());
-
         let response = self
             .client
             .post(&url)
-            .json(&req)
+            .json(&body)
             .send()
             .await
-            .expect("stream msg");
+            .expect("openai completion msg");
 
-        let is_stream = config.stream.unwrap_or(false);
-        if is_stream {
-            let mut stream = response.bytes_stream();
-            while let Some(item) = stream.next().await {
-                let data = &item.expect("msg");
-                let chunk_str = std::str::from_utf8(data).unwrap();
-                match parse_chunk(chunk_str) {
-                    Ok(response) => {
-                        let content = &response.choices[0].delta.content;
-                        let _ = callback(&content);
-
-                        std::io::stdout().flush().expect("Failed to flush stdout");
+        match req.stream.unwrap_or(false) {
+            true => {
+                let mut stream = response.bytes_stream();
+                while let Some(item) = stream.next().await {
+                    let data = &item.expect("msg");
+                    let chunk_str = std::str::from_utf8(data).expect("OpenAI expect utf8.");
+                    match parse_chunk(chunk_str) {
+                        Ok(response) => {
+                            let content = &response.choices[0].delta.content;
+                            if let Some(callback) = callback.get() {
+                                callback(content);
+                                std::io::stdout().flush().expect("Failed to flush stdout");
+                            }
+                        }
+                        Err(err) => println!("OpenAI error parsing chunk: {}", err),
                     }
-                    Err(err) => println!("Error parsing chunk: {}", err),
                 }
             }
-        } else {
-            let result: Result<ChatCompletion, serde_json::Error> =
-                serde_json::from_value(response.json().await.unwrap());
-
-            match result {
-                Ok(chat_completion) => {
-                    let _ = callback(&chat_completion.choices[0].message.content);
-                }
-                Err(err) => {
-                    eprintln!("Parse error: {}", err);
+            false => {
+                let chat_completion = response.json::<ChatCompletion>().await.ok();
+                if let Some(chat_completion) = chat_completion {
+                    chat_completion.choices.iter().for_each(|choice| {
+                        let text = &choice.message.content;
+                        if let Some(callback) = callback.get() {
+                            callback(text);
+                        }
+                    });
                 }
             }
         }
+
+        Ok(())
     }
 }
 
-impl Client {
-    pub fn config(&self, model: &str) -> ConfigBuilder {
-        ConfigBuilder::new(model.into())
-    }
+fn make_client(api_key: &str) -> reqwest::Client {
+    let mut headers = reqwest::header::HeaderMap::new();
+    headers.insert(
+        "Authorization",
+        format!("Bearer {}", api_key)
+            .parse()
+            .expect("Bearer token should parse"),
+    );
+
+    reqwest::Client::builder()
+        .default_headers(headers)
+        .build()
+        .expect("openai client should build")
 }
