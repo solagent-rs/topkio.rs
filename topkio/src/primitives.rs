@@ -284,7 +284,7 @@ pub struct TopCandidate {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct UsageMetadata {
+pub struct UsageMetadata {
     candidates_token_count: Option<usize>,
     prompt_token_count: Option<usize>,
     total_token_count: Option<usize>,

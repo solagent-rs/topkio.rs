@@ -49,8 +49,7 @@ impl<T: Tool> ToolDyn for T {
                     .map_err(|_e| ())
                     .map(|output| {
                         let x = serde_json::to_string(&output).ok();
-                        let y = x.unwrap_or_default();
-                        y
+                        x.unwrap_or_default()
                     }),
                 Err(_e) => Err(()),
             }
