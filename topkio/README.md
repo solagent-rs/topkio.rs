@@ -11,7 +11,8 @@ WIP
 - [x] Ollama
 - [x] Gemini
 - [x] streaming
-- [ ] tool
+- [x] tool
+- [ ] embeddings
 
 ## Quick Start
 ```rust
