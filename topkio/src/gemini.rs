@@ -41,7 +41,7 @@ impl<'a> Client<'a> {
     }
 }
 
-impl<'a> Completion for Client<'a> {
+impl Completion for Client<'_> {
     async fn post<F>(
         &self,
         req: CompletionRequest,

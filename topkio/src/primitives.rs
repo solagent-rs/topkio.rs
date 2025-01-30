@@ -191,7 +191,7 @@ impl GenerateContentRequest {
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum FinishReason {
     /// Default value. This value is unused.
-    FinishReasonUnspecified,
+    Unspecified,
     /// Natural stop point of the model or provided stop sequence.
     Stop,
     /// The maximum number of tokens as specified in the request was reached.
@@ -217,24 +217,24 @@ pub enum FinishReason {
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum HarmCategory {
-    HarmCategoryUnspecified,
-    HarmCategoryDerogatory,
-    HarmCategoryToxicity,
-    HarmCategoryViolence,
-    HarmCategorySexually,
-    HarmCategoryMedical,
-    HarmCategoryDangerous,
-    HarmCategoryHarassment,
-    HarmCategoryHateSpeech,
-    HarmCategorySexuallyExplicit,
-    HarmCategoryDangerousContent,
-    HarmCategoryCivicIntegrity,
+    Unspecified,
+    Derogatory,
+    Toxicity,
+    Violence,
+    Sexually,
+    Medical,
+    Dangerous,
+    Harassment,
+    HateSpeech,
+    SexuallyExplicit,
+    DangerousContent,
+    CivicIntegrity,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum HarmProbability {
-    HarmProbabilityUnspecified,
+    Unspecified,
     Negligible,
     Low,
     Medium,
