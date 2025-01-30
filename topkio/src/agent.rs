@@ -10,6 +10,7 @@ pub struct Agent<C: Completion> {
     pub model: String,
     pub temperature: Option<f64>,
     pub stream: Option<bool>,
+    pub max_tokens: Option<u64>,
 
     static_tools: Vec<String>,
     pub tools: ToolSet,
@@ -22,6 +23,8 @@ impl<C: Completion> Agent<C> {
             model: model.to_string(),
             temperature: None,
             stream: None,
+            max_tokens: None,
+
             static_tools: vec![],
             tools: ToolSet::default(),
         }
@@ -114,6 +117,11 @@ impl<C: Completion> AgentBuilder<C> {
     pub fn tool(mut self, tool: impl ToolDyn + 'static) -> Self {
         self.agent.static_tools.push(tool.name());
         self.agent.tools.add(tool);
+        self
+    }
+
+    pub fn max_tokens(mut self, max_tokens: Option<u64>) -> Self {
+        self.agent.max_tokens = max_tokens;
         self
     }
 

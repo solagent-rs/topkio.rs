@@ -18,6 +18,7 @@ WIP
 - [x] OpenAI
 - [x] Ollama
 - [x] Gemini
+- [x] Atoma
 - [x] streaming
 - [x] tool
 - [ ] embeddings
