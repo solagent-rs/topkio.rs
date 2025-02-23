@@ -15,6 +15,26 @@ Small, fast, powerful, and easy to use.
 
 </br>
 
-### Referenced project
+* Quick start
+```rust
+use topkio::{AgentBuilder, OpenAIClient};
 
-Thanks to [rig](https://github.com/0xPlaygrounds/rig)'s open-source spirit. This project has referred to [rig](https://github.com/0xPlaygrounds/rig) and obtained many valuable ideas and code examples from it.
+#[tokio::main]
+async fn main() {
+    let client = OpenAIClient::with_ollama("http://localhost:11434/v1");
+    let agent = AgentBuilder::new(client, "llama3.2")
+        .stream(true)
+        .temperature(0.8)
+        .build();
+
+    let f = |res: &str| {
+        print!("{}", res);
+    };
+
+    let prompt = "Entertain me";
+    let _ = agent.prompt(prompt, f).await;
+
+    println!("\n");
+}
+
+```
