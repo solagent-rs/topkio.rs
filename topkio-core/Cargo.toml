@@ -10,3 +10,11 @@ license = "MIT"
 description = "Multi-Agent Collaboration Framework."
 
 [dependencies]
+async-trait.workspace = true
+tokio.workspace = true
+
+# [features]
+# default = []
+# logging = ["tracing"]
+# serde = ["dep:serde"]
+# guardrail = ["rate-limiter"]

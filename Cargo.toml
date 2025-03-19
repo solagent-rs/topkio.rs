@@ -1,5 +1,14 @@
 [workspace]
 resolver = "2"
 members = [
+    #"topkio", # legacy
     "topkio-core",
 ]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+
+[workspace.dependencies]
+async-trait = "0.1"
+tokio = { version = "1.44.1", features = ["full"] }
