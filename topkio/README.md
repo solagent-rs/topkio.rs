@@ -8,4 +8,3 @@
 
 </br>
 
-The Small, fast, powerful, and easy to use **Multi-Agent Collaboration Workflow**.   
