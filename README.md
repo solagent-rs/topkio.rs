@@ -6,6 +6,8 @@
   [<img alt="crates.io" src="https://img.shields.io/crates/d/topkio?style=for-the-badge&logo=rust">](https://crates.io/crates/topkio)
 </div>
 
+Simple and easy to use LLM Router in Rust.
+
 </br>
 
 # WIP
