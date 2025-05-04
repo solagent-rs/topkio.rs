@@ -5,6 +5,7 @@ use topkio_core::provider::{Provider, ProviderConfig};
 use anyhow::Result;
 use crate::error::ProviderError;
 
+#[derive(Clone)]
 pub struct OllamaProvider {
     client: Client,
     config: ProviderConfig,

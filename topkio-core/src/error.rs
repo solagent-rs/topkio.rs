@@ -8,4 +8,7 @@ pub enum TopkioError {
     InvalidRequest(String),
     #[error("Provider error: {0}")]
     ProviderError(String),
+
+    #[error("Provider error: {0}")]
+    ServerError(String),
 }
