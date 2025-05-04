@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "topkio",
     "topkio-core", 
     "topkio-server",
     "topkio-providers",

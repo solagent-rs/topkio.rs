@@ -7,23 +7,27 @@ use crate::gemini::GeminiProvider;
 use crate::ollama::OllamaProvider;
 use crate::deepseek::DeepSeekProvider;
 
-// 提供商类型枚举，包含模型名称
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum ProviderKind {
-    OpenAI(String),    // 模型名称，例如 "gpt-4"
-    Gemini(String),    // 模型名称，例如 "gemini-pro"
-    Ollama(String),    // 模型名称，例如 "llama3"
-    DeepSeek(String),  // 模型名称，例如 "deepseek-rag"
+    /// Ollama model, e.g., "llama3.2".
+    Ollama(String),
+    // /// OpenAI model, e.g., "gpt-4", "gpt-3.5-turbo".
+    // OpenAI(String),
+    // /// Gemini model, e.g., "gemini-1.0".
+    // Gemini(String),
+    // /// Anthropic model, e.g., "claude-3".
+    // Anthropic(String),
+    // /// Cohere model, e.g., "cohere-1.0".
+    // Cohere(String),
+    // /// Perplexity model, e.g., "perplexity-1.0".
+    // Perplexity(String),
 }
 
 impl ProviderKind {
     // 从配置键和模型名称创建 ProviderKind
     pub fn from_key_and_model(key: &str, model: &str) -> Option<Self> {
         match key {
-            "openai" => Some(ProviderKind::OpenAI(model.to_string())),
-            "gemini" => Some(ProviderKind::Gemini(model.to_string())),
             "ollama" => Some(ProviderKind::Ollama(model.to_string())),
-            "deepseek" => Some(ProviderKind::DeepSeek(model.to_string())),
             _ => None,
         }
     }
@@ -31,20 +35,14 @@ impl ProviderKind {
     // 根据模型名称匹配 ProviderKind
     pub fn matches_model(&self, model: &str) -> bool {
         match self {
-            ProviderKind::OpenAI(m) => m == model,
-            ProviderKind::Gemini(m) => m == model,
             ProviderKind::Ollama(m) => m == model,
-            ProviderKind::DeepSeek(m) => m == model,
         }
     }
 
     // 获取提供商的标识符（用于日志或调试）
     pub fn provider_name(&self) -> &'static str {
         match self {
-            ProviderKind::OpenAI(_) => "openai",
-            ProviderKind::Gemini(_) => "gemini",
             ProviderKind::Ollama(_) => "ollama",
-            ProviderKind::DeepSeek(_) => "deepseek",
         }
     }
 }
@@ -132,7 +130,7 @@ impl Default for DeepSeekProviderFactory {
 }
 
 // 创建提供商
-pub fn create_providers(config: topkio_core::config::ProvidersConfig) -> Vec<(ProviderKind, Arc<Box<dyn Provider>>)> {
+pub fn create_providers(config: topkio_core::provider::ProvidersConfig) -> Vec<(ProviderKind, Arc<Box<dyn Provider>>)> {
     let mut providers = Vec::new();
 
     // 提供商注册表

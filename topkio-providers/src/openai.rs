@@ -3,7 +3,7 @@ use reqwest::Client;
 use topkio_core::models::{ChatCompletionRequest, ChatCompletionResponse};
 use topkio_core::provider::{Provider, ProviderConfig};
 use anyhow::Result;
-use crate::error::ProviderError;
+use crate::error::ProvidersError;
 
 #[derive(Clone)]
 pub struct OpenAIProvider {
@@ -35,7 +35,7 @@ impl Provider for OpenAIProvider {
             .await?
             .json::<ChatCompletionResponse>()
             .await
-            .map_err(|e| ProviderError::InvalidResponse(e.to_string()))?;
+            .map_err(|e| ProvidersError::InvalidResponse(e.to_string()))?;
         Ok(response)
     }
 }

@@ -1,35 +1,17 @@
-use axum::{routing::post, Router};
-use std::net::SocketAddr;
-use tracing::info;
-
-mod config;
-mod models;
-mod rate_limit;
-mod router;
-mod providers;
-
-use config::GatewayConfig;
+use crate::server::start_server;
+use tracing_subscriber;
+use topkio_config::{ServerConfig, TopkioConfig};
 
 #[tokio::main]
 async fn main() {
-    // Initialize logging
+    // 初始化日志
     tracing_subscriber::fmt::init();
 
-    // Load configuration
-    let config = GatewayConfig::load().expect("Failed to load config");
+    // 加载配置
+    let config: ServerConfig = TopkioConfig::parse_section("path", "server")?;
 
-    // Build router with middleware
-    let app = Router::new()
-        .route("/v1/completions", post(router::handle_completion))
-        .layer(tower_http::trace::TraceLayer::new_for_http())
-        .layer(tower::ServiceBuilder::new()
-            .layer(axum::middleware::from_fn(rate_limit::rate_limit_middleware)));
-
-    // Start server
-    let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
-    info!("Server listening on {}", addr);
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    // 启动服务器
+    if let Err(e) = start_server(config).await {
+        eprintln!("Server error: {}", e);
+    }
 }

@@ -21,7 +21,7 @@ Topkio is actively under development, and some features are still being refined.
 ## Quick Start
 1. Clone the repository: `git clone https://github.com/your-username/topkio.git`
 2. Configure `topkio.toml` (see example).
-3. Run: `cargo run --package topkio-server`
+3. Run: `cargo run --package topkio`
 
 ```shell
 curl -X POST http://localhost:8080/chat/completions \

@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum ProviderError {
+pub enum ProvidersError {
     #[error("HTTP request failed: {0}")]
     RequestError(#[from] reqwest::Error),
     #[error("Invalid response format: {0}")]
