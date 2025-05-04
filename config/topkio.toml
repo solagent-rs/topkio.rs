@@ -1,0 +1,20 @@
+[server]
+host = "0.0.0.0"
+port = 8080
+
+[providers]
+[providers.openai]
+url = "https://api.openai.com/v1"
+api_key = "sk-xxx"
+
+[providers.gemini]
+url = "https://generativelanguage.googleapis.com/v1"
+api_key = "AIzaSy-xxx"
+
+[providers.ollama]
+url = "http://localhost:11434/v1"
+api_key = ""  # Ollama 通常无需 API 密钥
+
+[providers.deepseek]
+url = "https://api.deepseek.com/v1"
+api_key = "sk-ds-xxx"
