@@ -30,6 +30,6 @@ curl -X POST http://localhost:8080/chat/completions \
 ```
 
 ## License
-MIT License
+Apache License 2.0
 
 
