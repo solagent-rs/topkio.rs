@@ -1,0 +1,6 @@
+- [ ] 负载均衡：实现多个上游实例的请求分发
+- [ ] 缓存：添加语义缓存（semantic caching），减少重复请求的成本
+- [ ] 防护措施：实现提示防护（如防止越狱攻击）
+- [ ] 监控：集成 OpenTelemetry（OTEL）进行请求追踪和指标收集
+- [ ] 认证：添加 API 密钥验证或 OAuth 支持。
+- [ ] 流式响应：支持流式聊天完成（streaming chat completions）
