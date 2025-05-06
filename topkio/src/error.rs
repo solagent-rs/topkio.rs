@@ -1,5 +1,5 @@
 use axum::response::{IntoResponse, Response};
-use http::StatusCode;
+use axum::http::StatusCode;
 
 #[derive(Debug, thiserror::Error)]
 pub enum ApiError {
@@ -14,6 +14,9 @@ pub enum ApiError {
     
     #[error("Configuration error: {0}")]
     ConfigError(String),
+
+    #[error("Invalid model format: {0}")]
+    InvalidModelFormat(String),
 }
 
 impl IntoResponse for ApiError {

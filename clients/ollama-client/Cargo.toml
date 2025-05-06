@@ -1,0 +1,8 @@
+[package]
+name = "ollama-client"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+reqwest.workspace = true
