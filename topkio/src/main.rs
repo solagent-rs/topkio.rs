@@ -28,6 +28,8 @@ async fn initialize_backends(
         ollama_backend.health_check().await?;
         backends.insert("ollama".to_string(), Arc::new(ollama_backend));
     }
+
+    println!("Ollama backend initialized");
     
     // Gemini (optional)
     if let Some(gemini_cfg) = &config.providers.gemini {
@@ -39,12 +41,15 @@ async fn initialize_backends(
         backends.insert("gemini".to_string(), Arc::new(gemini_backend));
     }
     
+    println!("Backends initialized: {:?}", backends.keys());
 
     Ok(backends)
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    println!("Starting Topkio Gateway...");
+
     let config = GatewayConfig::load("config/topkio.toml")?;
     let backends = initialize_backends(&config).await?;
     
@@ -55,9 +60,11 @@ async fn main() -> anyhow::Result<()> {
         .with_state(state);
 
     // Start server
+    println!("Starting server on http://localhost:3000");
+
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
-    
+
     Ok(())
 }
 
