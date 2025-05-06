@@ -13,20 +13,18 @@ pub async fn chat_completion(
     );
 
     let response = reqwest::Client::new()
-        .post(&format!("{}/api/chat", base_url))
+        .post(format!("{}/api/chat", base_url))
         .json(&ChatCompletionRequest {
             model: "llama3.2".to_string(), // Updated model name format
             messages,
-            stream: stream,
+            stream,
         })
         .send()
-        .await
-        .unwrap();
-    // .error_for_status()?  // Add proper HTTP error handling
-    // .json::<serde_json::Value>()
-    // .await?;
+        .await?
+        .error_for_status()? // Add proper HTTP error handling
+        .json::<ChatCompletionResponse>()
+        .await?;
 
-    let response = response.json::<ChatCompletionResponse>().await?;
     println!("Received response: {:?}", response);
 
     Ok(response)
