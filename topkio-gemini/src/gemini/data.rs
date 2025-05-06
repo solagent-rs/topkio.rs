@@ -1,3 +1,4 @@
+#![allow(unused)]
 
 use serde::{Deserialize, Serialize};
 
@@ -238,12 +239,8 @@ impl TryFrom<GenerateContentResponse> for CompletionResponse<GenerateContentResp
         match response.candidates.as_slice() {
             [ContentCandidate { content, .. }, ..] => Ok(CompletionResponse {
                 choice: match content.parts.first().unwrap() {
-                    Part {
-                        text: text,
-                    } => ModelChoice::Message(text.clone()),
-                    Part {
-                        ..
-                    } => {
+                    Part { text } => ModelChoice::Message(text.clone()),
+                    Part { .. } => {
                         // let args_value = serde_json::Value::Object(
                         //     function_call.args.clone().unwrap_or_default(),
                         // );

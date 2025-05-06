@@ -1,6 +1,10 @@
-use serde::Deserialize;
-use std::{net::SocketAddr, path::PathBuf, time::Duration};
-use crate::error::ConfigError;
+#![allow(dead_code)]
+
+use {
+    crate::error::ConfigError,
+    serde::Deserialize,
+    std::{net::SocketAddr, path::PathBuf},
+};
 
 #[derive(Debug, Deserialize)]
 pub struct GatewayConfig {
@@ -66,29 +70,47 @@ pub struct ProviderConfig {
 }
 
 // Default values
-fn default_timeout() -> u64 { 30 }
-fn default_max_connections() -> u32 { 1000 }
-fn default_enabled() -> bool { true }
-fn default_burst_size() -> u32 { 10 }
-fn default_log_level() -> String { "info".into() }
-fn default_console_logging() -> bool { true }
-fn default_max_retries() -> u32 { 3 }
-fn default_retry_delay_ms() -> u64 { 500 }
-fn default_graceful_shutdown_seconds() -> u64 { 5 }
+fn default_timeout() -> u64 {
+    30
+}
+fn default_max_connections() -> u32 {
+    1000
+}
+fn default_enabled() -> bool {
+    true
+}
+fn default_burst_size() -> u32 {
+    10
+}
+fn default_log_level() -> String {
+    "info".into()
+}
+fn default_console_logging() -> bool {
+    true
+}
+fn default_max_retries() -> u32 {
+    3
+}
+fn default_retry_delay_ms() -> u64 {
+    500
+}
+fn default_graceful_shutdown_seconds() -> u64 {
+    5
+}
 
 impl GatewayConfig {
     pub fn load(path: &str) -> Result<Self, ConfigError> {
-        let config_str = std::fs::read_to_string(path)
-            .map_err(|_| ConfigError::FileNotFound(path.into()))?;
+        let config_str =
+            std::fs::read_to_string(path).map_err(|_| ConfigError::FileNotFound(path.into()))?;
 
-        let config: GatewayConfig = toml::from_str(&config_str)
-            .map_err(|e| ConfigError::InvalidConfig(e.to_string()))?;
+        let config: GatewayConfig =
+            toml::from_str(&config_str).map_err(|e| ConfigError::InvalidConfig(e.to_string()))?;
 
         // Post-load validation
         if let Some(openai) = &config.providers.openai {
             if openai.api_key.is_none() && std::env::var("OPENAI_API_KEY").is_err() {
                 return Err(ConfigError::MissingField(
-                    "providers.openai.api_key or OPENAI_API_KEY".into()
+                    "providers.openai.api_key or OPENAI_API_KEY".into(),
                 ));
             }
         }

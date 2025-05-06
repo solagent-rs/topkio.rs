@@ -1,5 +1,5 @@
+use crate::models::{ChatCompletionResponse, Message};
 use async_trait::async_trait;
-use crate::models::{Message, ChatCompletionResponse};
 
 #[async_trait]
 pub trait Backend: Send + Sync {

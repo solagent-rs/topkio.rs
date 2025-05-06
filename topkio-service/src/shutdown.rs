@@ -1,5 +1,6 @@
-use tokio::sync::oneshot;
-use tokio::time::Duration;
+#![allow(unused)]
+
+use tokio::{sync::oneshot, time::Duration};
 
 pub struct ShutdownConfig {
     pub graceful_timeout: Duration,
@@ -22,12 +23,11 @@ impl Default for ShutdownConfig {
 /// Configurable shutdown signal with multiple triggers
 pub async fn shutdown_signal(config: ShutdownConfig) {
     let (shutdown_tx, shutdown_rx) = oneshot::channel::<()>();
-    
+
     tokio::spawn(async move {
         #[cfg(unix)]
-        let mut sigterm = tokio::signal::unix::signal(
-            tokio::signal::unix::SignalKind::terminate()
-        ).expect("Failed to install SIGTERM handler");
+        let mut sigterm = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+            .expect("Failed to install SIGTERM handler");
 
         tokio::select! {
             _ = tokio::signal::ctrl_c() => {
@@ -54,7 +54,7 @@ pub async fn shutdown_signal(config: ShutdownConfig) {
 
         // Signal the server to shutdown
         let _ = shutdown_tx.send(());
-        
+
         // Force shutdown if graceful period expires
         tokio::time::sleep(Duration::from_secs(30)).await;
         println!("Graceful shutdown period expired, forcing exit");
@@ -64,7 +64,7 @@ pub async fn shutdown_signal(config: ShutdownConfig) {
     // Wait for shutdown signal
     let _ = shutdown_rx.await;
     println!("Shutting down gracefully...");
-    
+
     // Add any cleanup operations here
     cleanup_resources().await;
 }

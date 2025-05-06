@@ -1,17 +1,21 @@
-use axum::response::{IntoResponse, Response};
-use axum::http::StatusCode;
+#![allow(dead_code)]
+
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
 
 #[derive(Debug, thiserror::Error)]
 pub enum ApiError {
     #[error("Backend not configured: {0}")]
     BackendNotConfigured(String),
-    
+
     #[error("Unsupported model: {0}")]
     UnsupportedModel(String),
-    
+
     #[error("Backend error: {0}")]
     BackendError(String),
-    
+
     #[error("Configuration error: {0}")]
     ConfigError(String),
 
@@ -34,13 +38,10 @@ impl IntoResponse for ApiError {
 pub enum ConfigError {
     #[error("Config file not found: {0}")]
     FileNotFound(String),
-    
+
     #[error("Invalid config format: {0}")]
     InvalidConfig(String),
-    
+
     #[error("Missing required field: {0}")]
     MissingField(String),
-    
-    #[error("Invalid provider configuration: {0}")]
-    InvalidProvider(String),
 }

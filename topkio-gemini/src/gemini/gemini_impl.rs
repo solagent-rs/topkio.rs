@@ -1,11 +1,10 @@
-use crate::gemini::data::{GeminiRequest, GeminiResponse, Content, Part, SafetySetting, GenerationConfig};
-use topkio_core::models::Message;
-use crate::gemini::data::GenerateContentRequest;
-use futures_util::StreamExt;
-use crate::gemini::data::CompletionResponse;
-use crate::gemini::data::ModelChoice;
-
-use crate::gemini::data::GenerateContentResponse;
+use {
+    crate::gemini::data::{
+        CompletionResponse, GeminiResponse, GenerateContentRequest, GenerateContentResponse,
+        ModelChoice,
+    },
+    topkio_core::models::Message,
+};
 
 pub async fn chat_completion(
     base_url: &str,
@@ -22,10 +21,7 @@ pub async fn chat_completion(
     let endpoint = match eable_stream {
         true => format!(
             "{}/{}:{}?key={}",
-            base_url,
-            model,
-            "streamGenerateContent",
-            api_key,
+            base_url, model, "streamGenerateContent", api_key,
         ),
         false => format!(
             "{}/{}:{}?key={}",
@@ -85,8 +81,7 @@ pub async fn chat_completion(
             let generate_response = response.json::<GenerateContentResponse>().await;
             match generate_response {
                 Ok(generate_response) => {
-                    if let Ok(completion_response) =
-                        CompletionResponse::try_from(generate_response)
+                    if let Ok(completion_response) = CompletionResponse::try_from(generate_response)
                     {
                         match completion_response {
                             CompletionResponse {
@@ -112,10 +107,7 @@ pub async fn chat_completion(
                                 //     }
                                 // }
 
-                                println!(
-                                    "Gemini tool call: {} with args: {}",
-                                    toolname, args
-                                );
+                                println!("Gemini tool call: {} with args: {}", toolname, args);
                             }
                         }
                     }
@@ -129,4 +121,3 @@ pub async fn chat_completion(
 
     Ok(GeminiResponse::new(text))
 }
-

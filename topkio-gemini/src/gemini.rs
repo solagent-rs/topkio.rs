@@ -2,9 +2,9 @@ pub mod data;
 pub mod gemini_impl;
 
 use gemini_impl::chat_completion;
-use topkio_core::models::Message;
-use topkio_core::models::ChatCompletionResponse;
 use topkio_core::backend::Backend;
+use topkio_core::models::ChatCompletionResponse;
+use topkio_core::models::Message;
 
 pub struct GeminiBackend {
     base_url: String,
@@ -25,13 +25,8 @@ impl Backend for GeminiBackend {
         messages: Vec<Message>,
         stream: Option<bool>,
     ) -> Result<ChatCompletionResponse, anyhow::Error> {
-        let response = chat_completion(
-            &self.base_url,
-            &self.api_key,
-            model,
-            messages,
-            stream,
-        ).await?;
+        let response =
+            chat_completion(&self.base_url, &self.api_key, model, messages, stream).await?;
 
         Ok(ChatCompletionResponse {
             message: Message {
