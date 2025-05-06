@@ -2,14 +2,13 @@
 
 mod backends;
 mod config;
-mod models;
 mod error;
 use error::ApiError;
 
 use axum::{Router, routing::post, Json, extract::State};
 use std::{sync::Arc, collections::HashMap};
 use crate::{config::GatewayConfig, backends::backend::Backend};
-use crate::models::{ChatCompletionRequest, ChatCompletionResponse};
+use topkio_core::models::{ChatCompletionRequest, ChatCompletionResponse};
 
 struct AppState {
     backends: HashMap<String, Arc<dyn Backend>>,
@@ -30,6 +29,17 @@ async fn initialize_backends(
         backends.insert("ollama".to_string(), Arc::new(ollama_backend));
     }
     
+    // Gemini (optional)
+    if let Some(gemini_cfg) = &config.providers.gemini {
+        let gemini_backend = backends::gemini::GeminiBackend::new(
+            gemini_cfg.url.clone(),
+            gemini_cfg.api_key.clone().unwrap(),
+        );
+        gemini_backend.health_check().await?;
+        backends.insert("gemini".to_string(), Arc::new(gemini_backend));
+    }
+    
+
     Ok(backends)
 }
 

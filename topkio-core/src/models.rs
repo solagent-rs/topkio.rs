@@ -2,8 +2,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChatCompletionRequest {
-    pub model: String,
+    pub model: String,  // Format "backend:model_name"
     pub messages: Vec<Message>,
+    pub stream: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

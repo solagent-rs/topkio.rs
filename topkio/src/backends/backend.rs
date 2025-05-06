@@ -1,13 +1,12 @@
 use async_trait::async_trait;
-use crate::models::ChatCompletionResponse;
-use ollama_client::ChatMessage;
+use topkio_core::models::{Message, ChatCompletionResponse};
 
 #[async_trait]
 pub trait Backend: Send + Sync {
     async fn chat_completion(
         &self,
         model: &str,
-        messages: Vec<ChatMessage>,
+        messages: Vec<Message>,
     ) -> Result<ChatCompletionResponse, anyhow::Error>;
 
     async fn health_check(&self) -> Result<(), anyhow::Error>;

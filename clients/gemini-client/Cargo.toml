@@ -1,10 +1,11 @@
 [package]
-name = "ollama-client"
+name = "gemini-client"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
 serde.workspace = true
-reqwest.workspace = true
 serde_json.workspace = true
-topkio-core = { path = "../../topkio-core" }
+reqwest.workspace = true
+anyhow.workspace = true
+topkio-core ={ path = "../../topkio-core"}

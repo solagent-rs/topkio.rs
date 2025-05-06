@@ -2,12 +2,12 @@
 resolver = "2"
 members = [
     "topkio",
-    # "topkio-core", 
+    "topkio-core", 
     # "topkio-server",
     # "topkio-providers",
     # "topkio-config",
     "clients/ollama-client",
-    # "clients/openai-client",
+    "clients/gemini-client",
 ]
 
 [workspace.package]

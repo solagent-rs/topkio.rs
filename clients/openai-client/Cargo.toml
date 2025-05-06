@@ -1,6 +1,0 @@
-[package]
-name = "openai-client"
-version.workspace = true
-edition.workspace = true
-
-[dependencies]

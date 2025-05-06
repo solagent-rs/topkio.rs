@@ -20,6 +20,8 @@ async-trait = "0.1.88"
 toml = "0.8.22"
 anyhow.workspace = true
 ollama-client = { path = "../clients/ollama-client" }
+gemini-client = { path = "../clients/gemini-client" }
+topkio-core = { path = "../topkio-core" }
 
 
 # topkio-server = { path = "../topkio-server" }
