@@ -1,3 +1,3 @@
 mod gemini;
 
-pub use gemini::GeminiBackend;
+pub use gemini::api::GeminiBackend;

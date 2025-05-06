@@ -1,5 +1,5 @@
 use {
-    crate::gemini::data::{
+    crate::gemini::primitive::{
         CompletionResponse, GeminiResponse, GenerateContentRequest, GenerateContentResponse,
         ModelChoice,
     },
