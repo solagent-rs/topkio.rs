@@ -3,6 +3,7 @@
 mod config;
 mod error;
 use error::ApiError;
+mod shutdown;
 
 use axum::{Router, routing::post, Json, extract::State};
 use std::{sync::Arc, collections::HashMap};
@@ -58,15 +59,31 @@ pub async fn start() -> anyhow::Result<()> {
 
     let app = Router::new()
         .route("/chat/completions", post(handle_chat_completion))
-        .with_state(state);
+        .with_state(state.clone());
 
-    // Start server
-    println!("Starting server on http://localhost:3000");
+    // Get the server address from config
+    let addr = format!("{}:{}", &state.config.server.host, &state.config.server.port)
+    .parse::<String>()
+    .expect("Invalid server address configuration");
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    println!("Starting server on http://{}", addr);
+
+    // Create TCP listener with configurable options
+    let listener = tokio::net::TcpListener::bind(&addr)
+    .await
+    .unwrap_or_else(|_| panic!("Failed to bind to address {}", addr));
+
+    println!("Server running on http://{} (Press CTRL+C to stop)", addr);
+    axum::serve(listener, app).with_graceful_shutdown(shutdown_signal()).await?;
 
     Ok(())
+}
+
+async fn shutdown_signal() {
+    tokio::signal::ctrl_c()
+        .await
+        .expect("Failed to install CTRL+C handler");
+    println!("Shutting down gracefully...");
 }
 
 #[derive(Debug)]
