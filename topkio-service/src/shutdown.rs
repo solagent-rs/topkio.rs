@@ -1,6 +1,5 @@
 use tokio::sync::oneshot;
 use tokio::time::Duration;
-use anyhow::Result;
 
 pub struct ShutdownConfig {
     pub graceful_timeout: Duration,
@@ -21,7 +20,7 @@ impl Default for ShutdownConfig {
 }
 
 /// Configurable shutdown signal with multiple triggers
-pub async fn shutdown_signal() {
+pub async fn shutdown_signal(config: ShutdownConfig) {
     let (shutdown_tx, shutdown_rx) = oneshot::channel::<()>();
     
     tokio::spawn(async move {
