@@ -7,7 +7,7 @@ use {
 };
 
 #[derive(Debug, Deserialize)]
-pub struct GatewayConfig {
+pub struct TopkioConfig {
     pub server: ServerConfig,
     pub rate_limit: Option<RateLimitConfig>,
     pub logging: LoggingConfig,
@@ -98,12 +98,12 @@ fn default_graceful_shutdown_seconds() -> u64 {
     5
 }
 
-impl GatewayConfig {
+impl TopkioConfig {
     pub fn load(path: &str) -> Result<Self, ConfigError> {
         let config_str =
             std::fs::read_to_string(path).map_err(|_| ConfigError::FileNotFound(path.into()))?;
 
-        let config: GatewayConfig =
+        let config: TopkioConfig =
             toml::from_str(&config_str).map_err(|e| ConfigError::InvalidConfig(e.to_string()))?;
 
         // Post-load validation

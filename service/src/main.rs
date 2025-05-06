@@ -1,4 +1,3 @@
-mod config;
 mod error;
 use error::ApiError;
 mod handlers;
@@ -6,26 +5,23 @@ mod middleware;
 mod shutdown;
 
 use {
-    crate::{
-        config::GatewayConfig,
-        shutdown::{shutdown_signal, ShutdownConfig},
-    },
+    crate::shutdown::{shutdown_signal, ShutdownConfig},
     anyhow::Result,
     axum::{routing::post, Router},
     handlers::handle_chat_completion,
     std::{collections::HashMap, sync::Arc},
-    topkio_core::api::UnifiedLlmApi,
     topkio_google::GeminiBackend,
     topkio_ollama::OllamaBackend,
+    topkio_primitive::{api::UnifiedLlmApi, config::TopkioConfig},
 };
 
 struct AppState {
     backends: HashMap<String, Arc<dyn UnifiedLlmApi>>,
-    config: GatewayConfig,
+    config: TopkioConfig,
 }
 
 async fn initialize_backends(
-    config: &GatewayConfig,
+    config: &TopkioConfig,
 ) -> anyhow::Result<HashMap<String, Arc<dyn UnifiedLlmApi>>> {
     let mut backends: HashMap<String, Arc<dyn UnifiedLlmApi>> = HashMap::new();
 
@@ -54,7 +50,7 @@ async fn initialize_backends(
 pub async fn start() -> Result<()> {
     println!("Starting Topkio Gateway...");
 
-    let config = GatewayConfig::load("config/topkio.toml")?;
+    let config = TopkioConfig::load("topkio.toml")?;
     let backends = initialize_backends(&config).await?;
 
     let app_state = Arc::new(AppState { backends, config });

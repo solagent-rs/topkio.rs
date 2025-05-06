@@ -3,7 +3,7 @@ use {
     axum::extract::State,
     axum::Json,
     std::sync::Arc,
-    topkio_core::primitive::{ChatCompletionRequest, ChatCompletionResponse},
+    topkio_primitive::api::{ChatCompletionRequest, ChatCompletionResponse},
 };
 
 #[derive(Debug)]

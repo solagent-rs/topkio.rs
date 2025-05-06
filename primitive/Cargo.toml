@@ -1,5 +1,5 @@
 [package]
-name = "topkio-core"
+name = "topkio-primitive"
 version.workspace = true
 edition.workspace = true
 

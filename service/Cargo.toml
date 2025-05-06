@@ -14,4 +14,4 @@ toml.workspace = true
 anyhow.workspace = true
 topkio-ollama = { path = "../providers/ollama" }
 topkio-google = { path = "../providers/google" }
-topkio-core = { path = "../core" }
+topkio-primitive = { path = "../primitive" }

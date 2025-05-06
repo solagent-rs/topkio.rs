@@ -1,9 +1,6 @@
 use {
     super::chat_completion::chat_completion,
-    topkio_core::{
-        api::UnifiedLlmApi,
-        primitive::{ChatCompletionResponse, Message},
-    },
+    topkio_primitive::api::{ChatCompletionResponse, Message, UnifiedLlmApi},
 };
 
 pub struct GeminiBackend {

@@ -1,4 +1,4 @@
-use topkio_core::primitive::{ChatCompletionRequest, ChatCompletionResponse, Message};
+use topkio_primitive::api::{ChatCompletionRequest, ChatCompletionResponse, Message};
 
 pub async fn chat_completion(
     base_url: &str,

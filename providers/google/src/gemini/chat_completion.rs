@@ -3,7 +3,7 @@ use {
         CompletionResponse, GeminiResponse, GenerateContentRequest, GenerateContentResponse,
         ModelChoice,
     },
-    topkio_core::primitive::Message,
+    topkio_primitive::api::Message,
 };
 
 pub async fn chat_completion(

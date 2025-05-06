@@ -9,5 +9,5 @@ serde_json.workspace = true
 reqwest.workspace = true
 anyhow.workspace = true
 async-trait.workspace = true
-topkio-core ={ path = "../../core"}
+topkio-primitive ={ path = "../../primitive"}
 futures-util.workspace = true

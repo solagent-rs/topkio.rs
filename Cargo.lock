@@ -1295,20 +1295,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bfb942dfe1d8e29a7ee7fcbde5bd2b9a25fb89aa70caea2eba3bee836ff41076"
 
 [[package]]
-name = "topkio-core"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
- "toml",
- "tracing",
-]
-
-[[package]]
 name = "topkio-google"
 version = "0.1.0"
 dependencies = [
@@ -1318,7 +1304,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "topkio-core",
+ "topkio-primitive",
 ]
 
 [[package]]
@@ -1330,7 +1316,21 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "topkio-core",
+ "topkio-primitive",
+]
+
+[[package]]
+name = "topkio-primitive"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "toml",
+ "tracing",
 ]
 
 [[package]]
@@ -1345,9 +1345,9 @@ dependencies = [
  "thiserror",
  "tokio",
  "toml",
- "topkio-core",
  "topkio-google",
  "topkio-ollama",
+ "topkio-primitive",
 ]
 
 [[package]]

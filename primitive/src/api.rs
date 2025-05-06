@@ -1,8 +1,26 @@
 use {
-    crate::primitive::{ChatCompletionResponse, Message},
     anyhow::Result,
     async_trait::async_trait,
+    serde::{Deserialize, Serialize},
 };
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChatCompletionRequest {
+    pub model: String, // Format "backend:model_name"
+    pub messages: Vec<Message>,
+    pub stream: Option<bool>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Message {
+    pub role: String,
+    pub content: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChatCompletionResponse {
+    pub message: Message,
+}
 
 #[async_trait]
 pub trait UnifiedLlmApi: Send + Sync {

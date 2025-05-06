@@ -7,6 +7,6 @@ edition.workspace = true
 serde.workspace = true
 reqwest.workspace = true
 serde_json.workspace = true
-topkio-core ={ path = "../../core"}
+topkio-primitive ={ path = "../../primitive"}
 async-trait.workspace = true
 anyhow.workspace = true
