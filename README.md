@@ -14,19 +14,19 @@ Topkio is actively under development, and some features are still being refined.
 - Comprehensive unit tests and documentation.
 
 **Tips for WIP**:
-- **For Users**: Check the [Issues](https://github.com/your-username/topkio/issues) page for known bugs or limitations. Test with OpenAI, as it has the most stable implementation.
+- **For Users**: Check the [Issues](https://github.com/zTgx/topkio.rs/issues) page for known bugs or limitations. Test with OpenAI, as it has the most stable implementation.
 - **For Contributors**: Focus on open issues labeled `help wanted` or `good first issue`. Start with small tasks like adding tests or improving provider implementations.
 - **Feedback**: Share your experience or suggestions via GitHub Issues to help shape the project’s direction.
 
 ## Quick Start
-1. Clone the repository: `git clone https://github.com/your-username/topkio.git`
+1. Clone the repository: `git clone https://github.com/zTgx/topkio.rs.git`
 2. Configure `topkio.toml` (see example).
-3. Run: `cargo run --package topkio`
+3. Run: `cargo run`
 
 ```shell
 curl -X POST http://localhost:8080/chat/completions \
   -H "Content-Type: application/json" \
-  -d '{"model": "gpt-4", "messages": [{"role": "user", "content": "Hello, world!"}]}'
+  -d '{"model": "ollama::llama3.2", "messages": [{"role": "user", "content": "Explain AI in 10 words"}]}'
 ```
 
 ## License
