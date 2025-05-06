@@ -5,5 +5,3 @@
 # Ignore all files in config/
 config/*
 !config/default.toml.example
-
-config/topkio.toml
