@@ -1,8 +1,10 @@
-use crate::ApiError;
-use crate::AppState;
-use axum::{extract::State, Json};
-use std::sync::Arc;
-use topkio_core::models::{ChatCompletionRequest, ChatCompletionResponse};
+use {
+    crate::{ApiError, AppState},
+    axum::extract::State,
+    axum::Json,
+    std::sync::Arc,
+    topkio_core::primitive::{ChatCompletionRequest, ChatCompletionResponse},
+};
 
 #[derive(Debug)]
 pub struct ModelIdentifier {

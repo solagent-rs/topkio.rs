@@ -5,16 +5,19 @@ mod handlers;
 mod middleware;
 mod shutdown;
 
-use crate::config::GatewayConfig;
-use crate::shutdown::ShutdownConfig;
-use anyhow::Result;
-use axum::{routing::post, Router};
-use handlers::handle_chat_completion;
-use shutdown::shutdown_signal;
-use std::{collections::HashMap, sync::Arc};
-use topkio_core::backend::UnifiedLlmApi;
-use topkio_google::GeminiBackend;
-use topkio_ollama::OllamaBackend;
+use {
+    crate::{
+        config::GatewayConfig,
+        shutdown::{shutdown_signal, ShutdownConfig},
+    },
+    anyhow::Result,
+    axum::{routing::post, Router},
+    handlers::handle_chat_completion,
+    std::{collections::HashMap, sync::Arc},
+    topkio_core::api::UnifiedLlmApi,
+    topkio_google::GeminiBackend,
+    topkio_ollama::OllamaBackend,
+};
 
 struct AppState {
     backends: HashMap<String, Arc<dyn UnifiedLlmApi>>,

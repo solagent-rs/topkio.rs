@@ -1,6 +1,10 @@
-use crate::ollama::chat_completion::chat_completion;
-use topkio_core::backend::UnifiedLlmApi;
-use topkio_core::models::{ChatCompletionResponse, Message};
+use {
+    crate::ollama::chat_completion::chat_completion,
+    topkio_core::{
+        api::UnifiedLlmApi,
+        primitive::{ChatCompletionResponse, Message},
+    },
+};
 
 pub struct OllamaBackend {
     base_url: String,

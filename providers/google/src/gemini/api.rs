@@ -1,8 +1,8 @@
 use {
     super::chat_completion::chat_completion,
     topkio_core::{
-        backend::UnifiedLlmApi,
-        models::{ChatCompletionResponse, Message},
+        api::UnifiedLlmApi,
+        primitive::{ChatCompletionResponse, Message},
     },
 };
 

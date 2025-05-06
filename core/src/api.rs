@@ -1,9 +1,8 @@
 use {
-    async_trait::async_trait, 
+    crate::primitive::{ChatCompletionResponse, Message},
     anyhow::Result,
-    crate::models::{ChatCompletionResponse, Message},
+    async_trait::async_trait,
 };
-
 
 #[async_trait]
 pub trait UnifiedLlmApi: Send + Sync {
