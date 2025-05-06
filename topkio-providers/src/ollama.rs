@@ -1,9 +1,10 @@
 use async_trait::async_trait;
 use reqwest::Client;
 use topkio_core::models::{ChatCompletionRequest, ChatCompletionResponse};
-use topkio_core::provider::{Provider, ProviderConfig};
+use topkio_core::provider::Provider;
 use anyhow::Result;
 use crate::error::ProvidersError;
+use topkio_config::ProviderConfig;
 
 #[derive(Clone)]
 pub struct OllamaProvider {
@@ -26,10 +27,9 @@ impl Provider for OllamaProvider {
         &self,
         request: ChatCompletionRequest,
     ) -> Result<ChatCompletionResponse> {
-        // 示例实现，需根据 Ollama API 文档补充
         let response = self
             .client
-            .post(&format!("{}/chat/completions", self.config.url))
+            .post(&format!("{}/api/chat", self.config.url))
             .json(&request)
             .send()
             .await?

@@ -27,6 +27,7 @@ pub async fn start_server(config: Config) -> Result<(), TopkioError> {
     ));
 
     info!("Server running at http://{}", addr);
+    
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await

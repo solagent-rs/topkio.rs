@@ -6,6 +6,8 @@ members = [
     "topkio-server",
     "topkio-providers",
     "topkio-config",
+    "clients/ollama-client",
+    "clients/openai-client",
 ]
 
 [workspace.package]

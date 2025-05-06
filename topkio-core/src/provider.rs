@@ -18,7 +18,7 @@ pub struct ProvidersConfig {
 }
 
 #[async_trait]
-pub trait Provider: Send + Sync + Clone + 'static {
+pub trait Provider : Clone {
     async fn chat_completion(
         &self,
         request: ChatCompletionRequest,

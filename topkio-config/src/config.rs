@@ -5,14 +5,12 @@ use thiserror::Error;
 use crate::server::ServerConfig;
 use crate::rate_limit::RateLimitConfig;
 use crate::logging::LoggingConfig;
-use crate::provider::Providers;
 
 #[derive(Debug, Deserialize)]
 pub struct TopkioConfig {
     pub server: ServerConfig,
     pub rate_limit: RateLimitConfig,
     pub logging: LoggingConfig,
-    pub providers: Providers,
 }
 
 #[derive(Error, Debug)]
