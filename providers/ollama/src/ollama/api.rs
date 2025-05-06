@@ -1,5 +1,5 @@
 use crate::ollama::chat_completion::chat_completion;
-use topkio_core::backend::Backend;
+use topkio_core::backend::UnifiedLlmApi;
 use topkio_core::models::{ChatCompletionResponse, Message};
 
 pub struct OllamaBackend {
@@ -13,7 +13,7 @@ impl OllamaBackend {
 }
 
 #[async_trait::async_trait]
-impl Backend for OllamaBackend {
+impl UnifiedLlmApi for OllamaBackend {
     async fn chat_completion(
         &self,
         model: &str,

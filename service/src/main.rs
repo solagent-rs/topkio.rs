@@ -12,19 +12,19 @@ use axum::{routing::post, Router};
 use handlers::handle_chat_completion;
 use shutdown::shutdown_signal;
 use std::{collections::HashMap, sync::Arc};
-use topkio_core::backend::Backend;
+use topkio_core::backend::UnifiedLlmApi;
 use topkio_google::GeminiBackend;
 use topkio_ollama::OllamaBackend;
 
 struct AppState {
-    backends: HashMap<String, Arc<dyn Backend>>,
+    backends: HashMap<String, Arc<dyn UnifiedLlmApi>>,
     config: GatewayConfig,
 }
 
 async fn initialize_backends(
     config: &GatewayConfig,
-) -> anyhow::Result<HashMap<String, Arc<dyn Backend>>> {
-    let mut backends: HashMap<String, Arc<dyn Backend>> = HashMap::new();
+) -> anyhow::Result<HashMap<String, Arc<dyn UnifiedLlmApi>>> {
+    let mut backends: HashMap<String, Arc<dyn UnifiedLlmApi>> = HashMap::new();
 
     // Ollama (optional)
     if let Some(ollama_cfg) = &config.providers.ollama {

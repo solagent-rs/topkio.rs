@@ -17,8 +17,3 @@ pub struct Message {
 pub struct ChatCompletionResponse {
     pub message: Message,
 }
-
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct Choice {
-//     pub message: Message,
-// }

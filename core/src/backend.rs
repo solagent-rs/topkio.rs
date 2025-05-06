@@ -1,14 +1,32 @@
-use crate::models::{ChatCompletionResponse, Message};
-use async_trait::async_trait;
+use {
+    async_trait::async_trait, 
+    anyhow::Result,
+    crate::models::{ChatCompletionResponse, Message},
+};
+
 
 #[async_trait]
-pub trait Backend: Send + Sync {
+pub trait UnifiedLlmApi: Send + Sync {
+    /// Check if the backend is healthy.
+    async fn health_check(&self) -> Result<()> {
+        Ok(())
+    }
+
+    /// Get the list of available models from the backend.
+    async fn get_models(&self) -> Result<Vec<String>> {
+        Ok(vec![])
+    }
+
+    /// Request chat completion with a specific model.
     async fn chat_completion(
         &self,
         model: &str,
         messages: Vec<Message>,
         stream: Option<bool>,
-    ) -> Result<ChatCompletionResponse, anyhow::Error>;
+    ) -> Result<ChatCompletionResponse>;
 
-    async fn health_check(&self) -> Result<(), anyhow::Error>;
+    /// Request LLM embed with a specific model.
+    async fn embed(&self) -> Result<()> {
+        Ok(())
+    }
 }

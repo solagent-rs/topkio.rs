@@ -1,7 +1,7 @@
 use {
     super::chat_completion::chat_completion,
     topkio_core::{
-        backend::Backend,
+        backend::UnifiedLlmApi,
         models::{ChatCompletionResponse, Message},
     },
 };
@@ -18,7 +18,7 @@ impl GeminiBackend {
 }
 
 #[async_trait::async_trait]
-impl Backend for GeminiBackend {
+impl UnifiedLlmApi for GeminiBackend {
     async fn chat_completion(
         &self,
         model: &str,
