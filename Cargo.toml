@@ -3,9 +3,7 @@ resolver = "2"
 members = [
     "topkio",
     "topkio-core", 
-    # "topkio-server",
-    # "topkio-providers",
-    # "topkio-config",
+    "topkio-service",
     "topkio-ollama",
     "topkio-gemini",
 ]
