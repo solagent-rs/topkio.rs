@@ -37,7 +37,7 @@ async fn initialize_backends(
             gemini_cfg.url.clone(),
             gemini_cfg.api_key.clone().unwrap(),
         );
-        gemini_backend.health_check().await?;
+        // gemini_backend.health_check().await?;
         backends.insert("gemini".to_string(), Arc::new(gemini_backend));
     }
     
@@ -109,7 +109,7 @@ async fn handle_chat_completion(
     //     }
     // }
 
-    let response = backend.chat_completion(&model_name, request.messages)
+    let response = backend.chat_completion(&model_name, request.messages, request.stream)
         .await
         .map_err(|e| ApiError::BackendError(e.to_string()))?;
 

@@ -4,6 +4,7 @@ pub async fn chat_completion(
     base_url: &str,
     model: &str,
     messages: Vec<Message>,
+    stream: Option<bool>,
 ) -> Result<ChatCompletionResponse, reqwest::Error> {
     println!("Sending request to {} with model {} and messages {:#?}", base_url, model, messages);
 
@@ -12,7 +13,7 @@ pub async fn chat_completion(
     .json(&ChatCompletionRequest {
         model: "llama3.2".to_string(),  // Updated model name format
         messages,
-        stream: false,
+        stream: stream,
     })
     .send()
     .await.unwrap();

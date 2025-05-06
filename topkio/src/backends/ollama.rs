@@ -1,5 +1,5 @@
 use crate::backends::backend::Backend;
-use topkio_core::models::{ChatCompletionResponse, Choice, Message};
+use topkio_core::models::{ChatCompletionResponse, Message};
 
 pub struct OllamaBackend {
     base_url: String,
@@ -17,11 +17,13 @@ impl Backend for OllamaBackend {
         &self,
         model: &str,
         messages: Vec<Message>,
+        stream: Option<bool>,
     ) -> Result<ChatCompletionResponse, anyhow::Error> {
         let response = ollama_client::chat_completion(
             &self.base_url,
             model,
             messages,
+            stream,
         ).await?;
 
         Ok(response)

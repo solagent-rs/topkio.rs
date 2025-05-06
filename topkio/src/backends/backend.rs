@@ -7,6 +7,7 @@ pub trait Backend: Send + Sync {
         &self,
         model: &str,
         messages: Vec<Message>,
+        stream: Option<bool>,
     ) -> Result<ChatCompletionResponse, anyhow::Error>;
 
     async fn health_check(&self) -> Result<(), anyhow::Error>;

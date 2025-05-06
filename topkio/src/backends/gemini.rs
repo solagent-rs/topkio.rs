@@ -1,5 +1,5 @@
 use crate::backends::backend::Backend;
-use topkio_core::models::{ChatCompletionResponse, Choice, Message};
+use topkio_core::models::{ChatCompletionResponse, Message};
 use gemini_client::{chat_completion, GeminiResponse};
 
 pub struct GeminiBackend {
@@ -19,6 +19,7 @@ impl Backend for GeminiBackend {
         &self,
         model: &str,
         messages: Vec<Message>,
+        stream: Option<bool>,
     ) -> Result<ChatCompletionResponse, anyhow::Error> {
         let response = chat_completion(
             &self.base_url,
