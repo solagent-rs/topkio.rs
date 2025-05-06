@@ -19,8 +19,8 @@ thiserror = "1.0"
 async-trait = "0.1.88"
 toml = "0.8.22"
 anyhow.workspace = true
-ollama-client = { path = "../clients/ollama-client" }
-gemini-client = { path = "../clients/gemini-client" }
+topkio-ollama = { path = "../topkio-ollama" }
+topkio-gemini = { path = "../topkio-gemini" }
 topkio-core = { path = "../topkio-core" }
 
 

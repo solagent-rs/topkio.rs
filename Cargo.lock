@@ -375,17 +375,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gemini-client"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "reqwest",
- "serde",
- "serde_json",
- "topkio-core",
-]
-
-[[package]]
 name = "generic-array"
 version = "0.14.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -926,16 +915,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62948e14d923ea95ea2c7c86c71013138b66525b86bdc08d2dcc262bdb497b87"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "ollama-client"
-version = "0.1.0"
-dependencies = [
- "reqwest",
- "serde",
- "serde_json",
- "topkio-core",
 ]
 
 [[package]]
@@ -1667,8 +1646,6 @@ dependencies = [
  "axum",
  "config",
  "dashmap",
- "gemini-client",
- "ollama-client",
  "reqwest",
  "serde",
  "serde_json",
@@ -1676,6 +1653,8 @@ dependencies = [
  "tokio",
  "toml 0.8.22",
  "topkio-core",
+ "topkio-gemini",
+ "topkio-ollama",
  "tower 0.4.13",
  "tower-http",
  "tracing",
@@ -1694,6 +1673,30 @@ dependencies = [
  "thiserror 1.0.69",
  "toml 0.7.8",
  "tracing",
+]
+
+[[package]]
+name = "topkio-gemini"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "topkio-core",
+]
+
+[[package]]
+name = "topkio-ollama"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "topkio-core",
 ]
 
 [[package]]
