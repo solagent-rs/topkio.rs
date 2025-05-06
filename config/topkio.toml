@@ -25,8 +25,8 @@ max_retries = 3  # Retry failed requests
 retry_delay_ms = 500  # Delay between retries in milliseconds
 
 [providers.gemini]
-url = "https://generativelanguage.googleapis.com/v1beta"
-api_key = "AIzaSy-xxx"
+url = "https://generativelanguage.googleapis.com/v1beta/models"
+api_key = ""
 supported_models = ["gemini-2.0-flash"]
 max_retries = 2
 retry_delay_ms = 1000

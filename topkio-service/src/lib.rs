@@ -71,8 +71,6 @@ pub async fn start() -> anyhow::Result<()> {
     .parse::<String>()
     .expect("Invalid server address configuration");
 
-    println!("Starting server on http://{}", addr);
-
     // Create TCP listener with configurable options
     let listener = tokio::net::TcpListener::bind(&addr)
     .await

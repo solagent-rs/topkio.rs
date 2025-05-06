@@ -30,23 +30,17 @@ impl Backend for GeminiBackend {
             &self.api_key,
             model,
             messages,
+            stream,
         ).await?;
 
-        // Convert Gemini response to our standard format
-        let first_candidate = response.candidates.first()
-            .ok_or_else(|| anyhow::anyhow!("No candidates in response"))?;
-        
-        let first_part = first_candidate.content.parts.first()
-            .ok_or_else(|| anyhow::anyhow!("No content parts in response"))?;
+        Ok(ChatCompletionResponse {
+            message: Message {
+                role: "user".to_string(),
+                content: response.text,
+            },
+        })
 
-        // Ok(ChatCompletionResponse {
-        //     message: Message {
-        //         role: first_candidate.content.role.clone().unwrap_or("model".to_string()),
-        //         content: first_part.text.clone(),
-        //     },
-        // })
-
-        todo!("Convert Gemini response to standard format");
+        // todo!("Convert Gemini response to standard format");
     }
 
     async fn health_check(&self) -> Result<(), anyhow::Error> {

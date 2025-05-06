@@ -10,3 +10,4 @@ reqwest.workspace = true
 anyhow.workspace = true
 async-trait.workspace = true
 topkio-core ={ path = "../topkio-core"}
+futures-util.workspace = true
