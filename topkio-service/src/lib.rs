@@ -5,8 +5,9 @@ mod error;
 use error::ApiError;
 mod shutdown;
 mod handlers;
+mod middleware;
 
-use axum::{Router, routing::post};
+use axum::{routing::post, Router};
 use std::{sync::Arc, collections::HashMap};
 use crate::config::GatewayConfig;
 use handlers::handle_chat_completion;
@@ -58,14 +59,15 @@ pub async fn start() -> anyhow::Result<()> {
     let config = GatewayConfig::load("config/topkio.toml")?;
     let backends = initialize_backends(&config).await?;
     
-    let state = Arc::new(AppState { backends, config });
+    let app_state = Arc::new(AppState { backends, config });
 
     let app = Router::new()
         .route("/chat/completions", post(handle_chat_completion))
-        .with_state(state.clone());
+        // .layer(axum::middleware::from_fn_with_state(app_state.clone(), crate::middleware::auth_middleware))
+        .with_state(app_state.clone());
 
     // Get the server address from config
-    let addr = format!("{}:{}", &state.config.server.host, &state.config.server.port)
+    let addr = format!("{}:{}", &app_state.config.server.host, &app_state.config.server.port)
     .parse::<String>()
     .expect("Invalid server address configuration");
 
@@ -78,10 +80,10 @@ pub async fn start() -> anyhow::Result<()> {
 
     println!("Server running on http://{} (Press CTRL+C to stop)", addr);
     let shutdown_config = ShutdownConfig {
-        graceful_timeout: tokio::time::Duration::from_secs(state.config.server.graceful_shutdown_seconds),
+        graceful_timeout: tokio::time::Duration::from_secs(app_state.config.server.graceful_shutdown_seconds),
         enable_ctrl_c: true,
         enable_signal: false,
-        enable_custom: state.config.server.enable_custom_shutdown,
+        enable_custom: app_state.config.server.enable_custom_shutdown,
     };
     axum::serve(listener, app).with_graceful_shutdown(shutdown_signal(shutdown_config)).await?;
 
