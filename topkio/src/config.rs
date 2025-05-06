@@ -1,79 +1,99 @@
 use serde::Deserialize;
-use std::{collections::HashMap, env, path::Path};
+use std::{net::SocketAddr, path::PathBuf, time::Duration};
+use crate::error::ConfigError;
 
-#[derive(Debug, Deserialize, Clone)]
-pub struct BackendConfig {
-    pub base_url: String,
-    pub api_key: Option<String>,
-    pub supported_models: Option<Vec<String>>,
-}
-
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize)]
 pub struct GatewayConfig {
-    pub backends: HashMap<String, BackendConfig>,
+    pub server: ServerConfig,
+    pub rate_limit: Option<RateLimitConfig>,
+    pub logging: LoggingConfig,
+    pub providers: ProvidersConfig,
 }
 
-#[derive(Debug, thiserror::Error)]
-pub enum ConfigError {
-    #[error("Config file not found: {0}")]
-    FileNotFound(String),
-    
-    #[error("Invalid config format: {0}")]
-    InvalidConfig(String),
-    
-    #[error("Missing required field: {0}")]
-    MissingField(String),
-    
-    #[error("Environment variable not found: {0}")]
-    EnvVarNotFound(String),
+#[derive(Debug, Deserialize)]
+pub struct ServerConfig {
+    pub host: String,
+    pub port: u16,
+    #[serde(default = "default_timeout")]
+    pub timeout_seconds: u64,
+    #[serde(default = "default_max_connections")]
+    pub max_connections: u32,
 }
 
-impl BackendConfig {
-    /// Resolves API key with environment variable fallback
-    pub fn resolve_api_key(&self) -> Result<String, ConfigError> {
-        if let Some(key) = &self.api_key {
-            if key.starts_with("env:") {
-                let var_name = &key[4..];
-                env::var(var_name)
-                    .map_err(|_| ConfigError::EnvVarNotFound(var_name.to_string()))
-            } else {
-                Ok(key.clone())
-            }
-        } else {
-            Err(ConfigError::MissingField("api_key".to_string()))
-        }
-    }
+#[derive(Debug, Deserialize)]
+pub struct RateLimitConfig {
+    #[serde(default = "default_enabled")]
+    pub enabled: bool,
+    pub requests_per_minute: u32,
+    #[serde(default = "default_burst_size")]
+    pub burst_size: u32,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct LoggingConfig {
+    #[serde(default = "default_log_level")]
+    pub level: String,
+    pub file_path: PathBuf,
+    #[serde(default = "default_console_logging")]
+    pub enable_console: bool,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ProvidersConfig {
+    pub openai: Option<ProviderConfig>,
+    pub gemini: Option<ProviderConfig>,
+    pub ollama: Option<ProviderConfig>,
+    pub deepseek: Option<ProviderConfig>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ProviderConfig {
+    pub url: String,
+    #[serde(default)]
+    pub api_key: Option<String>,
+    #[serde(default)]
+    pub model: Option<String>,
+    #[serde(default)]
+    pub supported_models: Vec<String>,
+    #[serde(default = "default_max_retries")]
+    pub max_retries: u32,
+    #[serde(default = "default_retry_delay_ms")]
+    pub retry_delay_ms: u64,
+}
+
+// Default values
+fn default_timeout() -> u64 { 30 }
+fn default_max_connections() -> u32 { 1000 }
+fn default_enabled() -> bool { true }
+fn default_burst_size() -> u32 { 10 }
+fn default_log_level() -> String { "info".into() }
+fn default_console_logging() -> bool { true }
+fn default_max_retries() -> u32 { 3 }
+fn default_retry_delay_ms() -> u64 { 500 }
 
 impl GatewayConfig {
-    /// Loads and validates configuration
-    pub fn load_checked(path: impl AsRef<Path>) -> Result<Self, ConfigError> {
-        let path = path.as_ref();
+    pub fn load(path: &str) -> Result<Self, ConfigError> {
         let config_str = std::fs::read_to_string(path)
-            .map_err(|_| ConfigError::FileNotFound(path.display().to_string()))?;
+            .map_err(|_| ConfigError::FileNotFound(path.into()))?;
 
-        let mut config: GatewayConfig = toml::from_str(&config_str)
+        let config: GatewayConfig = toml::from_str(&config_str)
             .map_err(|e| ConfigError::InvalidConfig(e.to_string()))?;
 
-        // Post-processing
-        for (name, backend) in &mut config.backends {
-            if name == "openai" {
-                // Ensure OpenAI has API key
-                if backend.api_key.is_none() && env::var("OPENAI_API_KEY").is_err() {
-                    return Err(ConfigError::MissingField(
-                        "openai.api_key or OPENAI_API_KEY".to_string(),
-                    ));
-                }
+        // Post-load validation
+        if let Some(openai) = &config.providers.openai {
+            if openai.api_key.is_none() && std::env::var("OPENAI_API_KEY").is_err() {
+                return Err(ConfigError::MissingField(
+                    "providers.openai.api_key or OPENAI_API_KEY".into()
+                ));
             }
         }
 
         Ok(config)
     }
 
-    /// Gets backend config with proper error
-    pub fn get_backend(&self, name: &str) -> Result<&BackendConfig, ConfigError> {
-        self.backends
-            .get(name)
-            .ok_or_else(|| ConfigError::MissingField(format!("backends.{}", name)))
+    pub fn socket_addr(&self) -> SocketAddr {
+        format!("{}:{}", self.server.host, self.server.port)
+            .parse()
+            .expect("Invalid server address")
     }
 }

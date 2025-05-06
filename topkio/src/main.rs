@@ -22,9 +22,9 @@ async fn initialize_backends(
     let mut backends: HashMap<String, Arc<dyn Backend>> = HashMap::new();
 
     // Ollama (optional)
-    if let Ok(ollama_cfg) = config.get_backend("ollama") {
+    if let Some(ollama_cfg) = &config.providers.ollama {
         let ollama_backend = backends::ollama::OllamaBackend::new(
-            ollama_cfg.base_url.clone(),
+            ollama_cfg.url.clone(),
         );
         ollama_backend.health_check().await?;
         backends.insert("ollama".to_string(), Arc::new(ollama_backend));
@@ -35,7 +35,7 @@ async fn initialize_backends(
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let config = GatewayConfig::load_checked("config/default.toml")?;
+    let config = GatewayConfig::load("config/topkio.toml")?;
     let backends = initialize_backends(&config).await?;
     
     let state = Arc::new(AppState { backends, config });
@@ -78,17 +78,19 @@ async fn handle_chat_completion(
     Json(request): Json<ChatCompletionRequest>,
 ) -> Result<Json<ChatCompletionResponse>, ApiError> {
     let model_id = ModelIdentifier::parse(&request.model)?;
+    println!("Received chat completion request for model: {}", request.model);
+    
     let backend_name = model_id.backend;
     let model_name = model_id.model_name;
 
     let backend = state.backends.get(&backend_name)
         .ok_or_else(|| ApiError::BackendNotConfigured(backend_name.to_string()))?;
 
-    if let Some(supported) = &state.config.backends[&backend_name].supported_models {
-        if !supported.contains(&model_name.to_string()) {
-            return Err(ApiError::UnsupportedModel(model_name.to_string()));
-        }
-    }
+    // if let Some(supported) = &state.config.backends[&backend_name].supported_models {
+    //     if !supported.contains(&model_name.to_string()) {
+    //         return Err(ApiError::UnsupportedModel(model_name.to_string()));
+    //     }
+    // }
 
     let response = backend.chat_completion(&model_name, request.messages)
         .await

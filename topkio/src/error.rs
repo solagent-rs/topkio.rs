@@ -29,3 +29,18 @@ impl IntoResponse for ApiError {
         (status, self.to_string()).into_response()
     }
 }
+
+#[derive(Debug, thiserror::Error)]
+pub enum ConfigError {
+    #[error("Config file not found: {0}")]
+    FileNotFound(String),
+    
+    #[error("Invalid config format: {0}")]
+    InvalidConfig(String),
+    
+    #[error("Missing required field: {0}")]
+    MissingField(String),
+    
+    #[error("Invalid provider configuration: {0}")]
+    InvalidProvider(String),
+}

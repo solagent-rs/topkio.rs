@@ -31,7 +31,7 @@ impl Backend for OllamaBackend {
     }
 
     async fn health_check(&self) -> Result<(), anyhow::Error> {
-        reqwest::get(&format!("{}/api/tags", self.base_url))
+        reqwest::get(&format!("{}/api/version", self.base_url))
             .await?
             .error_for_status()?;
         Ok(())

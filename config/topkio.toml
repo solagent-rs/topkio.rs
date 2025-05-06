@@ -30,9 +30,9 @@ max_retries = 2
 retry_delay_ms = 1000
 
 [providers.ollama]
-url = "http://localhost:11434/v1"
+url = "http://localhost:11434"
 api_key = ""  # Ollama typically doesn't require an API key
-supported_models = ["llama3", "mistral"]
+supported_models = ["llama3.2", "mistral"]
 max_retries = 1
 retry_delay_ms = 200
 
