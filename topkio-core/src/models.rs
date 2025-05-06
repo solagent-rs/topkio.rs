@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct ChatCompletionRequest {
     pub model: String,  // Format "backend:model_name"
     pub messages: Vec<Message>,
-    pub stream: bool,
+    pub stream: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -15,10 +15,10 @@ pub struct Message {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChatCompletionResponse {
-    pub choices: Vec<Choice>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Choice {
     pub message: Message,
 }
+
+// #[derive(Debug, Clone, Serialize, Deserialize)]
+// pub struct Choice {
+//     pub message: Message,
+// }

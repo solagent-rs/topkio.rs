@@ -18,6 +18,10 @@ pub struct ServerConfig {
     pub timeout_seconds: u64,
     #[serde(default = "default_max_connections")]
     pub max_connections: u32,
+    #[serde(default = "default_graceful_shutdown_seconds")]
+    pub graceful_shutdown_seconds: u64,
+    #[serde(default = "default_enabled")]
+    pub enable_custom_shutdown: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -70,6 +74,7 @@ fn default_log_level() -> String { "info".into() }
 fn default_console_logging() -> bool { true }
 fn default_max_retries() -> u32 { 3 }
 fn default_retry_delay_ms() -> u64 { 500 }
+fn default_graceful_shutdown_seconds() -> u64 { 5 }
 
 impl GatewayConfig {
     pub fn load(path: &str) -> Result<Self, ConfigError> {

@@ -1,4 +1,7 @@
 /target
 .env
 .env.example
-/config/topkio.toml
+
+# Ignore all files in config/
+config/*
+!config/default.toml.example

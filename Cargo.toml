@@ -3,11 +3,9 @@ resolver = "2"
 members = [
     "topkio",
     "topkio-core", 
-    # "topkio-server",
-    # "topkio-providers",
-    # "topkio-config",
-    "clients/ollama-client",
-    "clients/gemini-client",
+    "topkio-service",
+    "topkio-ollama",
+    "topkio-gemini",
 ]
 
 [workspace.package]
@@ -23,3 +21,7 @@ tracing = "0.1"
 tracing-subscriber = "0.3"
 thiserror = "1.0"
 anyhow = "1.0"
+async-trait = "0.1"
+tokio = { version = "1.0", features = ["full"] }
+axum = "0.8"
+futures-util = "0.3.31"

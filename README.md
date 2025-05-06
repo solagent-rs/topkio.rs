@@ -24,20 +24,18 @@ Topkio is actively under development, and some features are still being refined.
 3. Run: `cargo run`
 
 ```shell
-curl -X POST http://localhost:8080/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "ollama::llama3.2", 
-    "messages": [{"role": "user", "content": "Explain AI in 10 words"}]
-  }'
-
 curl -X POST http://localhost:3000/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gemini:gemini-pro",
+    "model": "ollama::llama3.2", 
+    "messages": [{"role": "user", "content": "Explain AI in 10 words"}],
+  }'
+
+curl -X POST http://localhost:3000/chat/completions   -H "Content-Type: application/json"   -d '{
+    "model": "gemini:gemini-2.0-flash",
     "messages": [
-      {"role": "user", "content": "Explain quantum computing in simple terms"}
-    ]
+      {"role": "user", "content": "Explain AI in 10 words"}
+    ], "stream": false
   }'
 ```
 

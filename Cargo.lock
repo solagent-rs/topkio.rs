@@ -351,6 +351,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
 
 [[package]]
+name = "futures-macro"
+version = "0.3.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "162ee34ebcb7c64a8abebc059ce0fee27c2262618d7b60ed8faf72fef13c3650"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "futures-sink"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -369,20 +380,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9fa08315bb612088cc391249efdc3bc77536f16c91f6cf495e6fbe85b20a4a81"
 dependencies = [
  "futures-core",
+ "futures-macro",
  "futures-task",
  "pin-project-lite",
  "pin-utils",
-]
-
-[[package]]
-name = "gemini-client"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "reqwest",
- "serde",
- "serde_json",
- "topkio-core",
+ "slab",
 ]
 
 [[package]]
@@ -926,16 +928,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62948e14d923ea95ea2c7c86c71013138b66525b86bdc08d2dcc262bdb497b87"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "ollama-client"
-version = "0.1.0"
-dependencies = [
- "reqwest",
- "serde",
- "serde_json",
- "topkio-core",
 ]
 
 [[package]]
@@ -1663,23 +1655,8 @@ name = "topkio"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "async-trait",
- "axum",
- "config",
- "dashmap",
- "gemini-client",
- "ollama-client",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
  "tokio",
- "toml 0.8.22",
- "topkio-core",
- "tower 0.4.13",
- "tower-http",
- "tracing",
- "tracing-subscriber",
+ "topkio-service",
 ]
 
 [[package]]
@@ -1694,6 +1671,55 @@ dependencies = [
  "thiserror 1.0.69",
  "toml 0.7.8",
  "tracing",
+]
+
+[[package]]
+name = "topkio-gemini"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "futures-util",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "topkio-core",
+]
+
+[[package]]
+name = "topkio-ollama"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "topkio-core",
+]
+
+[[package]]
+name = "topkio-service"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "axum",
+ "config",
+ "dashmap",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "toml 0.8.22",
+ "topkio-core",
+ "topkio-gemini",
+ "topkio-ollama",
+ "tower 0.4.13",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

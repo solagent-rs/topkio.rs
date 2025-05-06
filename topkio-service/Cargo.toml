@@ -1,0 +1,24 @@
+[package]
+name = "topkio-service"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+axum = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+config = "0.13"
+tower = "0.4"
+tower-http = { version = "0.4", features = ["trace"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+dashmap = "5.0"
+reqwest = { version = "0.11", features = ["json"] }
+thiserror = "1.0"
+async-trait = "0.1.88"
+toml = "0.8.22"
+anyhow.workspace = true
+topkio-ollama = { path = "../topkio-ollama" }
+topkio-gemini = { path = "../topkio-gemini" }
+topkio-core = { path = "../topkio-core" }
