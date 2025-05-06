@@ -14,6 +14,8 @@ pub async fn chat_completion(
     messages: Vec<Message>,
     stream: Option<bool>,
 ) -> Result<GeminiResponse, anyhow::Error> {
+    println!("Gemini chat completion request: {:?}", messages);
+
     let mut text = String::new();
 
     let eable_stream = stream.unwrap_or(false);
@@ -30,6 +32,8 @@ pub async fn chat_completion(
             base_url, model, "generateContent", api_key,
         ),
     };
+
+    println!("Gemini endpoint: {}", endpoint);
 
     let body = GenerateContentRequest::new(messages[0].content.as_str());
     let response = reqwest::Client::new()
