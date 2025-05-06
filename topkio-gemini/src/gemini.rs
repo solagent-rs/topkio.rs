@@ -1,7 +1,7 @@
 pub mod data;
 pub mod gemini_impl;
-use gemini_impl::chat_completion;
 
+use gemini_impl::chat_completion;
 use topkio_core::models::Message;
 use topkio_core::models::ChatCompletionResponse;
 use topkio_core::backend::Backend;
@@ -35,12 +35,10 @@ impl Backend for GeminiBackend {
 
         Ok(ChatCompletionResponse {
             message: Message {
-                role: "user".to_string(),
+                role: "assistant".to_string(),
                 content: response.text,
             },
         })
-
-        // todo!("Convert Gemini response to standard format");
     }
 
     async fn health_check(&self) -> Result<(), anyhow::Error> {
