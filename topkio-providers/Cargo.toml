@@ -1,0 +1,15 @@
+[package]
+name = "topkio-providers"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+reqwest = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+async-trait = "0.1"
+topkio-core = { path = "../topkio-core" }
+topkio-config = { path = "../topkio-config" }
+anyhow = { workspace = true }

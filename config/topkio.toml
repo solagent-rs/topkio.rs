@@ -1,0 +1,44 @@
+[server]
+host = "0.0.0.0"
+port = 8080
+timeout_seconds = 30  # Request timeout in seconds
+max_connections = 1000  # Maximum concurrent connections
+
+[rate_limit]
+enabled = true
+requests_per_minute = 60  # Global rate limit per client
+burst_size = 10  # Allow short bursts of requests
+
+[logging]
+level = "info"  # Log level: trace, debug, info, warn, error
+file_path = "logs/gateway.log"  # Log file path
+enable_console = true  # Enable console logging
+
+[providers]
+[providers.openai]
+url = "https://api.openai.com/v1"
+api_key = "sk-xxx"
+supported_models = ["gpt-4", "gpt-3.5-turbo"]
+max_retries = 3  # Retry failed requests
+retry_delay_ms = 500  # Delay between retries in milliseconds
+
+[providers.gemini]
+url = "https://generativelanguage.googleapis.com/v1"
+api_key = "AIzaSy-xxx"
+model = "gemini-pro"
+max_retries = 2
+retry_delay_ms = 1000
+
+[providers.ollama]
+url = "http://localhost:11434"
+api_key = ""  # Ollama typically doesn't require an API key
+supported_models = ["llama3.2", "mistral"]
+max_retries = 1
+retry_delay_ms = 200
+
+[providers.deepseek]
+url = "https://api.deepseek.com/v1"
+api_key = "sk-ds-xxx"
+model = "deepseek-rag"
+max_retries = 3
+retry_delay_ms = 500
