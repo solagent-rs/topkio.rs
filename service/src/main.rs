@@ -7,12 +7,13 @@ mod shutdown;
 
 use crate::config::GatewayConfig;
 use crate::shutdown::ShutdownConfig;
+use anyhow::Result;
 use axum::{routing::post, Router};
 use handlers::handle_chat_completion;
 use shutdown::shutdown_signal;
 use std::{collections::HashMap, sync::Arc};
 use topkio_core::backend::Backend;
-use topkio_gemini::GeminiBackend;
+use topkio_google::GeminiBackend;
 use topkio_ollama::OllamaBackend;
 
 struct AppState {
@@ -47,7 +48,7 @@ async fn initialize_backends(
     Ok(backends)
 }
 
-pub async fn start() -> anyhow::Result<()> {
+pub async fn start() -> Result<()> {
     println!("Starting Topkio Gateway...");
 
     let config = GatewayConfig::load("config/topkio.toml")?;
@@ -85,6 +86,13 @@ pub async fn start() -> anyhow::Result<()> {
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal(shutdown_config))
         .await?;
+
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    start().await?;
 
     Ok(())
 }

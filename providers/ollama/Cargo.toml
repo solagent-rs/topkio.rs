@@ -1,13 +1,12 @@
 [package]
-name = "topkio-gemini"
+name = "topkio-ollama"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
 serde.workspace = true
-serde_json.workspace = true
 reqwest.workspace = true
-anyhow.workspace = true
+serde_json.workspace = true
+topkio-core ={ path = "../../core"}
 async-trait.workspace = true
-topkio-core ={ path = "../topkio-core"}
-futures-util.workspace = true
+anyhow.workspace = true

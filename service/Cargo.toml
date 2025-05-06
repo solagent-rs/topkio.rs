@@ -12,6 +12,6 @@ thiserror.workspace = true
 async-trait.workspace = true
 toml.workspace = true
 anyhow.workspace = true
-topkio-ollama = { path = "../topkio-ollama" }
-topkio-gemini = { path = "../topkio-gemini" }
-topkio-core = { path = "../topkio-core" }
+topkio-ollama = { path = "../providers/ollama" }
+topkio-google = { path = "../providers/google" }
+topkio-core = { path = "../core" }

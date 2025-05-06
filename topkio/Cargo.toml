@@ -1,9 +1,0 @@
-[package]
-name = "topkio"
-version.workspace = true
-edition.workspace = true
-
-[dependencies]
-topkio-service ={ path = "../topkio-service" }
-tokio.workspace = true
-anyhow.workspace = true

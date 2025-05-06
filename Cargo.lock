@@ -1295,15 +1295,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bfb942dfe1d8e29a7ee7fcbde5bd2b9a25fb89aa70caea2eba3bee836ff41076"
 
 [[package]]
-name = "topkio"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "tokio",
- "topkio-service",
-]
-
-[[package]]
 name = "topkio-core"
 version = "0.1.0"
 dependencies = [
@@ -1318,7 +1309,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "topkio-gemini"
+name = "topkio-google"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -1355,7 +1346,7 @@ dependencies = [
  "tokio",
  "toml",
  "topkio-core",
- "topkio-gemini",
+ "topkio-google",
  "topkio-ollama",
 ]
 

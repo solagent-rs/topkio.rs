@@ -1,11 +1,10 @@
 [workspace]
 resolver = "2"
 members = [
-    "topkio",
-    "topkio-core", 
-    "topkio-service",
-    "topkio-ollama",
-    "topkio-gemini",
+    "core", 
+    "service",
+    "providers/ollama",
+    "providers/google",
 ]
 
 [workspace.package]
