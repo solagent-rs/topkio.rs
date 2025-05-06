@@ -1642,23 +1642,8 @@ name = "topkio"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "async-trait",
- "axum",
- "config",
- "dashmap",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
  "tokio",
- "toml 0.8.22",
- "topkio-core",
- "topkio-gemini",
- "topkio-ollama",
- "tower 0.4.13",
- "tower-http",
- "tracing",
- "tracing-subscriber",
+ "topkio-service",
 ]
 
 [[package]]
@@ -1697,6 +1682,30 @@ dependencies = [
  "serde",
  "serde_json",
  "topkio-core",
+]
+
+[[package]]
+name = "topkio-service"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "axum",
+ "config",
+ "dashmap",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "toml 0.8.22",
+ "topkio-core",
+ "topkio-gemini",
+ "topkio-ollama",
+ "tower 0.4.13",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
