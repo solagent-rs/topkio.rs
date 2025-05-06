@@ -12,6 +12,8 @@ use topkio_core::models::{ChatCompletionRequest, ChatCompletionResponse};
 use topkio_core::backend::Backend;
 use topkio_ollama::OllamaBackend;
 use topkio_gemini::GeminiBackend;
+use shutdown::shutdown_signal;
+use crate::shutdown::ShutdownConfig;
 
 struct AppState {
     backends: HashMap<String, Arc<dyn Backend>>,
@@ -74,16 +76,16 @@ pub async fn start() -> anyhow::Result<()> {
     .unwrap_or_else(|_| panic!("Failed to bind to address {}", addr));
 
     println!("Server running on http://{} (Press CTRL+C to stop)", addr);
+    let shutdown_config = ShutdownConfig {
+        graceful_timeout: tokio::time::Duration::from_secs(state.config.server.graceful_shutdown_seconds),
+        enable_ctrl_c: true,
+        enable_signal: false,
+        enable_custom: state.config.server.enable_custom_shutdown,
+    };
     axum::serve(listener, app).with_graceful_shutdown(shutdown_signal()).await?;
+    // axum::serve(listener, app).await?;
 
     Ok(())
-}
-
-async fn shutdown_signal() {
-    tokio::signal::ctrl_c()
-        .await
-        .expect("Failed to install CTRL+C handler");
-    println!("Shutting down gracefully...");
 }
 
 #[derive(Debug)]

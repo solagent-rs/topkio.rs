@@ -1,5 +1,6 @@
 use tokio::sync::oneshot;
-use std::time::Duration;
+use tokio::time::Duration;
+use anyhow::Result;
 
 pub struct ShutdownConfig {
     pub graceful_timeout: Duration,
@@ -19,46 +20,59 @@ impl Default for ShutdownConfig {
     }
 }
 
-pub async fn shutdown_signal(config: ShutdownConfig) -> oneshot::Receiver<()> {
-    let (shutdown_tx, shutdown_rx) = oneshot::channel();
+/// Configurable shutdown signal with multiple triggers
+pub async fn shutdown_signal() {
+    let (shutdown_tx, shutdown_rx) = oneshot::channel::<()>();
     
     tokio::spawn(async move {
+        #[cfg(unix)]
         let mut sigterm = tokio::signal::unix::signal(
             tokio::signal::unix::SignalKind::terminate()
         ).expect("Failed to install SIGTERM handler");
 
         tokio::select! {
+            _ = tokio::signal::ctrl_c() => {
+                println!("\nReceived CTRL+C, initiating graceful shutdown...");
+            },
             _ = async {
-                if config.enable_ctrl_c {
-                    tokio::signal::ctrl_c()
-                        .await
-                        .expect("Failed to install CTRL+C handler");
-                    println!("Received CTRL+C, initiating shutdown...");
-                }
-            } => {},
-            _ = async {
-                if config.enable_signal {
+                #[cfg(unix)]
+                {
                     sigterm.recv().await;
-                    println!("Received SIGTERM, initiating shutdown...");
+                    println!("Received SIGTERM, initiating graceful shutdown...");
+                }
+                #[cfg(not(unix))]
+                {
+                    tokio::time::sleep(Duration::MAX).await;
                 }
             } => {},
             _ = async {
-                if config.enable_custom {
-                    // Custom shutdown trigger (e.g., from health check)
-                    tokio::time::sleep(Duration::from_secs(3600)).await; // Example
-                    println!("Custom shutdown trigger activated");
-                }
+                // Custom shutdown trigger (e.g., from health check)
+                // Example: shutdown after 1 hour for demonstration
+                tokio::time::sleep(Duration::from_secs(3600)).await;
+                println!("Custom shutdown trigger activated");
             } => {},
         };
 
-        // Notify server to shutdown
+        // Signal the server to shutdown
         let _ = shutdown_tx.send(());
         
         // Force shutdown if graceful period expires
-        tokio::time::sleep(config.graceful_timeout).await;
+        tokio::time::sleep(Duration::from_secs(30)).await;
         println!("Graceful shutdown period expired, forcing exit");
         std::process::exit(0);
     });
 
-    shutdown_rx
+    // Wait for shutdown signal
+    let _ = shutdown_rx.await;
+    println!("Shutting down gracefully...");
+    
+    // Add any cleanup operations here
+    cleanup_resources().await;
+}
+
+/// Example resource cleanup function
+async fn cleanup_resources() {
+    println!("Closing database connections...");
+    tokio::time::sleep(Duration::from_secs(1)).await; // Simulate cleanup
+    println!("Resources cleaned up successfully");
 }

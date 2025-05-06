@@ -3,6 +3,8 @@ host = "0.0.0.0"
 port = 3000
 timeout_seconds = 30  # Request timeout in seconds
 max_connections = 1000  # Maximum concurrent connections
+graceful_shutdown_seconds = 10  # Graceful shutdown timeout
+enable_custom_shutdown = true  # Enable custom shutdown endpoint
 
 [rate_limit]
 enabled = true
