@@ -99,3 +99,10 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #444;
 }
+
+/* In app/globals.css */
+@layer components {
+  .important-label {
+    @apply text-white-500 font-bold;
+  }
+}
