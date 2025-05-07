@@ -28,7 +28,7 @@ export function AdvancedControls() {
     <Card className="border-gray-800 bg-gray-950">
       <CardContent className="p-4">
         <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpanded(!expanded)}>
-          <h3 className="font-mono font-semibold">Advanced Controls</h3>
+          <h3 className="font-mono font-semibold text-white">Advanced Controls</h3>
           <Button variant="ghost" size="icon" className="h-6 w-6">
             {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>
@@ -36,7 +36,7 @@ export function AdvancedControls() {
 
         {expanded && (
           <div className="mt-4 space-y-4">
-            <div className="space-y-2">
+            <div className="space-y-2 text-white">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-mono text-gray-400">Temperature</label>
                 <span className="text-xs font-mono">{temperature.toFixed(2)}</span>
@@ -52,7 +52,7 @@ export function AdvancedControls() {
               <p className="text-xs text-gray-500">Controls randomness: lower is more deterministic</p>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 text-white">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-mono text-gray-400">Top P</label>
                 <span className="text-xs font-mono">{topP.toFixed(2)}</span>
@@ -86,7 +86,7 @@ export function AdvancedControls() {
                   type="number"
                   value={maxTokens}
                   onChange={(e) => setMaxTokens(Number(e.target.value))}
-                  className="w-16 h-8 bg-gray-900 border-gray-700 font-mono text-xs"
+                  className="w-16 h-8 bg-gray-900 border-gray-700 font-mono text-xs text-white"
                 />
               </div>
               <p className="text-xs text-gray-500">Maximum length of generated text</p>
@@ -97,7 +97,7 @@ export function AdvancedControls() {
               <Textarea
                 value={systemMessage}
                 onChange={(e) => setSystemMessage(e.target.value)}
-                className="min-h-[100px] bg-gray-900 border-gray-700 font-mono text-xs resize-none"
+                className="min-h-[100px] bg-gray-900 border-gray-700 font-mono text-xs resize-none text-white"
                 placeholder="You are a helpful AI assistant..."
               />
               <p className="text-xs text-gray-500">Instructions for the AI model</p>
@@ -107,10 +107,10 @@ export function AdvancedControls() {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs bg-gray-900 border-gray-700 hover:bg-gray-800"
+                className="text-xs bg-gray-900 border-gray-700 hover:bg-gray-800 text-white"
                 onClick={resetSettings}
               >
-                <RotateCcw className="h-3 w-3 mr-1" />
+                <RotateCcw className="h-3 w-3 mr-1 text-white" />
                 Reset
               </Button>
               <Button size="sm" className="text-xs bg-green-700 hover:bg-green-600">

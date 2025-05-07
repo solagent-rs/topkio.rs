@@ -39,7 +39,7 @@ export function ChatInterface() {
   }
 
   return (
-    <Card className="border-gray-800 bg-gray-950">
+    <Card className="border-gray-800 bg-gray-950 text-white">
       <CardContent className="p-0">
         <div className="flex flex-col h-[calc(100vh-180px)]">
           {/* Chat Header */}
@@ -56,7 +56,7 @@ export function ChatInterface() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Switch id="streaming" checked={isStreaming} onCheckedChange={setIsStreaming} />
-                <Label htmlFor="streaming" className="font-mono text-xs cursor-pointer">
+                <Label htmlFor="streaming" className="font-mono text-xs cursor-pointer text-white">
                   Streaming
                 </Label>
               </div>
@@ -75,7 +75,7 @@ export function ChatInterface() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_0%,rgba(0,128,0,0.05)_100%)]">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_0%,rgba(0,128,0,0.05)_100%)] text-white">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-gray-500">
                 <div className="font-mono text-center max-w-md">
@@ -83,7 +83,7 @@ export function ChatInterface() {
                   <p className="mb-4">
                     Select a provider and model, then start chatting to interact with the AI Gateway.
                   </p>
-                  <div className="text-xs text-gray-600 border border-gray-800 bg-gray-900 p-2 rounded font-mono">
+                  <div className="text-xs text-gray-600 border border-gray-800 bg-gray-900 p-2 rounded font-mono text-white">
                     $ echo "Hello, AI Gateway!" | gateway-client --provider={selectedProvider} --model={selectedModel}
                   </div>
                 </div>
@@ -111,7 +111,7 @@ export function ChatInterface() {
 
           {/* Input Area */}
           <div className="p-4 border-t border-gray-800 bg-gray-900">
-            <div className="flex gap-2 mb-2">
+            <div className="flex gap-2 mb-2 text-white">
               <Button variant="outline" size="sm" className="h-8 bg-gray-900 border-gray-700 hover:bg-gray-800">
                 <Code className="h-4 w-4 mr-1" />
                 <span className="text-xs">Code</span>
@@ -125,7 +125,7 @@ export function ChatInterface() {
                 <span className="text-xs">Assist</span>
               </Button>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 text-white">
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

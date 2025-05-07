@@ -17,7 +17,7 @@ export function Providers() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-mono font-semibold">Providers</h2>
-        <Badge variant="outline" className="font-mono text-xs">
+        <Badge variant="outline" className="font-mono text-xs text-white">
           {Object.keys(providers).length} Available
         </Badge>
       </div>
@@ -40,10 +40,10 @@ export function Providers() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <ProviderIcon provider={key} />
-                  <h3 className="font-mono font-bold">{key.toUpperCase()}</h3>
+                  <h3 className="font-mono font-bold text-white">{key.toUpperCase()}</h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant={config.status === "online" ? "success" : "destructive"} className="font-mono text-xs">
+                  <Badge variant={config.status === "online" ? "success" : "destructive"} className="font-mono text-xs text-white">
                     {config.status}
                   </Badge>
                   <Button
