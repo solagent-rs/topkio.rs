@@ -2,3 +2,20 @@
 .env
 .env.example
 topkio.toml
+
+# ui-client
+node_modules
+package-lock.json
+# coverage
+coverage
+# build
+dist
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
